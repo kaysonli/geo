@@ -28,7 +28,7 @@ export default {
 @import url("./../node_modules/vux/vux.css");
 @import url("./../node_modules/font-awesome/css/font-awesome.min.css");
 body {
-  font-family: Helvetica, sans-serif;
+  font-family: 微软雅黑, Helvetica, sans-serif;
   background: yellow;
 }
 </style>

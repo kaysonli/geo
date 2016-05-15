@@ -18,8 +18,15 @@
                             <span>在线</span>
                         </div>
                     </div>
-                    <div class="location">{{dev.location}}</div>
-                    <time>{{dev.lastActive}}</time>
+                    <div class="location">
+                        <i class="fa fa-map-marker"></i>
+                        <span>{{dev.location}}</span>
+                    </div>
+                    <div class="time">
+                        <i class="fa fa-clock-o"></i>
+                        <span>上次上线：</span>
+                        <time>{{dev.lastActive}}</time>
+                    </div>
                 </div>
             </div>
         </div>
@@ -35,19 +42,19 @@ export default {
                 status: 'off',
                 battery: '50%',
                 location: '中国广州越秀区',
-                lastActive: '2016年5月15日10:12:20'
+                lastActive: '2016-5-15 10:12:20'
             }, {
                 name: '哈瑞',
                 status: 'on',
                 battery: '80%',
                 location: '中国深圳南山区',
-                lastActive: '2016年5月15日10:12:20'
+                lastActive: '2016-5-15 10:12:20'
             }, {
                 name: '洛洛',
                 status: 'off',
                 battery: '5%',
                 location: '中国广州越秀区',
-                lastActive: '2016年5月15日10:12:20'
+                lastActive: '2016-5-15 10:12:20'
             }]
         }
     },
@@ -82,6 +89,7 @@ export default {
 
     .item .map {
         width: 100px;
+        margin-right: 10px;
     }
 
     .item-info {
@@ -100,5 +108,17 @@ export default {
 
     .battery {
         width: 40px;
+    }
+
+    .fa {
+        margin-right: 5px;
+    }
+
+    .on .fa {
+        color: green;
+    }
+    .off .fa,
+    .time {
+        color: gray;
     }
 </style>
