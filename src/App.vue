@@ -1,12 +1,13 @@
 <template>
-  <div id="app">
+  <!-- <div class="app">
     <hello></hello>
     <group>
       <cell title="vue" value="cool">
       </cell>
     </group>
       	<date-time title="日期"></date-time>
-  </div>
+  </div> -->
+  <router-view></router-view>
 </template>
 
 <script>
@@ -25,7 +26,9 @@ export default {
 
 <style>
 @import url("./../node_modules/vux/vux.css");
+@import url("./../node_modules/font-awesome/css/font-awesome.min.css");
 body {
   font-family: Helvetica, sans-serif;
+  background: yellow;
 }
 </style>
