@@ -1,4 +1,13 @@
 <template>
+    <header class="nav-bar flex-box">
+        <div class="flex-item" @click="goHome">
+            <i class="fa fa-caret-left"></i>
+        </div>
+        <div class="title flex-item-fill">我的宠管家</div>
+        <div class="flex-item" @click="search">
+            <i class="fa fa-search"></i>
+        </div>
+    </header>
     <div class="device-list">
         <div class="btn add" @click="addDevice">新建宠管家</div>
         <div class="item-list">
@@ -61,6 +70,12 @@ export default {
     methods: {
         addDevice() {
             this.$router.go('/add');
+        },
+        search() {
+
+        },
+        goHome() {
+            this.$router.go('/home');
         }
     }
 }
@@ -121,4 +136,5 @@ export default {
     .time {
         color: gray;
     }
+
 </style>

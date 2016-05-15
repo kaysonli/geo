@@ -31,4 +31,25 @@ body {
   font-family: 微软雅黑, Helvetica, sans-serif;
   background: yellow;
 }
+.nav-bar {
+  height: 45px;
+  line-height: 45px;
+}
+.flex-box {
+  display: flex;
+}
+.flex-item-fill {
+  flex: 1;
+}
+.nav-bar .title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+.nav-bar{
+  padding: 0 10px;
+}
+.nav-bar .fa {
+  
+}
 </style>
