@@ -83,12 +83,6 @@ export default {
 <style scoped>
     .add {
         background: #fff;
-        height: 40px;
-        line-height: 40px;
-        width: 80%;
-        border-radius: 20px;
-        text-align: center;
-        margin: 20px auto;
     }
 
     .item-list {

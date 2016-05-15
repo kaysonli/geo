@@ -31,6 +31,14 @@ body {
   font-family: 微软雅黑, Helvetica, sans-serif;
   background: yellow;
 }
+.btn {
+  height: 40px;
+  line-height: 40px;
+  width: 80%;
+  border-radius: 20px;
+  text-align: center;
+  margin: 20px auto;
+}
 .nav-bar {
   height: 45px;
   line-height: 45px;
@@ -52,4 +60,17 @@ body {
 .nav-bar .fa {
   
 }
+.center {
+  text-align: center;
+}
+.text-field {
+  padding-left: 16px;
+  border-bottom: 1px solid gray;
+}
+
+.text-field input {
+  padding: 16px;
+  border: none;
+}
+
 </style>

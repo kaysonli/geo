@@ -6,7 +6,7 @@
 			</div>
 			<div>我的宠管家</div>
 		</div>
-		<div class="home-nav">
+		<div class="home-nav" @click="addDevice">
 			<div class="add-device icon-row">
 				<i class="fa fa-plus"></i>
 			</div>
@@ -26,6 +26,9 @@ export default {
 	methods: {
 		viewList() {
 			this.$router.go('/list');
+		},
+		addDevice() {
+			this.$router.go('/add');
 		}
 	}
 }

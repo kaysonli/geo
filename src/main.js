@@ -4,6 +4,8 @@ import VueRouter from 'vue-router'
 
 import Home from './views/home.vue'
 import Device from './views/device-list.vue'
+import Add from './views/add-device.vue'
+import Input from './views/device-input.vue'
 
 Vue.use(VueRouter);
 
@@ -15,6 +17,12 @@ router.map({
 	},
 	'/list': {
 		component: Device
+	},
+	'/add': {
+		component: Add
+	},
+	'/input': {
+		component: Input
 	}
 });
 
