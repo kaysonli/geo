@@ -29,7 +29,7 @@ export default {
 @import url("./../node_modules/font-awesome/css/font-awesome.min.css");
 body {
   font-family: 微软雅黑, Helvetica, sans-serif;
-  background: yellow;
+  background: #ececec;
 }
 .btn {
   height: 40px;

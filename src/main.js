@@ -6,6 +6,7 @@ import Home from './views/home.vue'
 import Device from './views/device-list.vue'
 import Add from './views/add-device.vue'
 import Input from './views/device-input.vue'
+import Login from './views/login.vue'
 
 Vue.use(VueRouter);
 
@@ -23,6 +24,9 @@ router.map({
 	},
 	'/input': {
 		component: Input
+	},
+	'/login': {
+		component: Login
 	}
 });
 
