@@ -1,18 +1,27 @@
 <template>
-    <div class="login">
-        <img class="logo" src="./resources/images/logo.png">
+    <div class="register">
         <div class="text-field flex-box">
-            <i class="fa fa-user"></i>
-            <input type="text" v-el:userName>
-            <i class="fa fa-remove" @click="clear"></i>
+            <i class="fa fa-phone"></i>
+            <input type="text" placeholder="手机号">
+            <div class="btn">获取验证码</div>
         </div>
-        <div class="text-field flex-box">
-            <i class="fa fa-lock"></i>
-            <input type="password">
-            <span class="forgot">忘记密码</span>
+        <div class="disclaimer center">
+            <div>*注册即视为我已阅读并同意</div>
+            <div class="link">《软件注册使用协议》</div>
         </div>
-        <div class="btn">登录</div>
-        <div class="register center" @click="register">没有账户，点击注册</div>
+        <div class="text-field">
+            <input type="text" placeholder="请输入验证码" v-el:code>
+        </div>
+        <div class="text-field">
+            <input type="text" placeholder="请输入用户名(4-16位数字或字母)" v-el:username>
+        </div>
+        <div class="text-field">
+            <input type="password" placeholder="请输入密码(6-12位数字或字母)" v-el:password>
+        </div>
+        <div class="text-field">
+            <input type="password2" placeholder="再次输入密码(重复密码)" v-el:password>
+        </div>
+        <div class="btn">注册</div>
     </div>
 </template>
 
@@ -22,15 +31,12 @@ export default {
         clear() {
             this.$els.username.value = '';
             this.$els.username.focus();
-        },
-        register() {
-            this.$router.go('./register');
         }
     }
 }
 </script>
 <style scoped>
-    .login {
+    .register {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -40,22 +46,19 @@ export default {
         top: 0;
         bottom: 0;
     }
-    .logo {
-        margin-top: 50px;
-        margin-bottom: 50px;
-    }
     .text-field {
         margin: 16px;
-        padding-left: 0;
         border: 1px solid #999;
         border-radius: 20px;
         background: #fff;
         align-items: center;
+        width: 80%;
         height: 50px;
         /*box-sizing: border-box;*/
     }
     .text-field input {
-        flex: 1;
+        display: block;
+        width: 80%;
         border: none;
         outline: 0;
         font-size: 16px;
@@ -64,17 +67,6 @@ export default {
         border: none;
         -webkit-appearance: none;
     }
-    .fa {
-        font-size: 20px;
-    }
-    .fa-remove {
-        width: 30px;
-    }
-    .forgot {
-        color: yellowgreen;
-        margin-right: 10px;
-        white-space: nowrap;
-    }
     .btn {
         background: yellowgreen;
         color: #fff;
@@ -82,7 +74,7 @@ export default {
         margin: 16px;
         height: 47px;
     }
-    .register {
+    .link {
         color: brown;
     }
 </style>

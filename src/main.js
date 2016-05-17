@@ -7,6 +7,7 @@ import Device from './views/device-list.vue'
 import Add from './views/add-device.vue'
 import Input from './views/device-input.vue'
 import Login from './views/login.vue'
+import Register from './views/register.vue'
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,9 @@ router.map({
 	},
 	'/login': {
 		component: Login
+	},
+	'/register': {
+		component: Register
 	}
 });
 
