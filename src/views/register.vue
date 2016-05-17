@@ -1,36 +1,55 @@
 <template>
-    <div class="register">
+    <form class="register">
         <div class="text-field flex-box">
-            <i class="fa fa-phone"></i>
-            <input type="text" placeholder="手机号">
-            <div class="btn">获取验证码</div>
+            <i class="fa fa-mobile"></i>
+            <input type="text" placeholder="请输入手机号码">
+            <div class="btn fetch" @click="fetch">获取验证码</div>
         </div>
-        <div class="disclaimer center">
-            <div>*注册即视为我已阅读并同意</div>
-            <div class="link">《软件注册使用协议》</div>
+        <div class="text-field flex-box">
+            <i class="fa fa-commenting"></i>
+            <input type="text" placeholder="请输入短信验证码" v-el:code>
         </div>
-        <div class="text-field">
-            <input type="text" placeholder="请输入验证码" v-el:code>
+        <div class="error" v-show="error.code">*验证码不正确</div>
+        <div class="disclaimer">
+            <div class="link">*注册即视为我已阅读并同意《软件注册使用协议》</div>
         </div>
-        <div class="text-field">
-            <input type="text" placeholder="请输入用户名(4-16位数字或字母)" v-el:username>
-        </div>
-        <div class="text-field">
-            <input type="password" placeholder="请输入密码(6-12位数字或字母)" v-el:password>
+        <div class="text-field password-field">
+            <input type="password" placeholder="设置密码(6-12位数字或字母)" v-el:password>
         </div>
         <div class="text-field">
-            <input type="password2" placeholder="再次输入密码(重复密码)" v-el:password>
+            <input type="password" placeholder="请重复确认密码" v-el:password2>
         </div>
-        <div class="btn">注册</div>
-    </div>
+        <div class="error" v-show="error.unmatch">*两次密码不一致</div>
+        <div class="error" v-show="error.password">密码格式不正确</div>
+        <div class="bottom">
+            <div class="btn" @click="submit">立即注册</div>
+        </div>
+    </form>
 </template>
 
 <script>
 export default {
+    data() {
+        return {
+            error: {
+                code: false,
+                unmatch: false,
+                password: false
+            }
+        }
+    },
     methods: {
-        clear() {
-            this.$els.username.value = '';
-            this.$els.username.focus();
+        fetch() {
+
+        },
+        validate() {
+            this.error.code = this.$els.code.value === '';
+            this.error.unmatch = this.$els.password.value !== this.$els.password2.value;
+            this.error.password = /^[a-zA-Z0-9]{6,12}$/.test(this.$els.password.value) === false;
+            return !(this.error.code || this.error.userName || this.error.unmatch || this.password)
+        },
+        submit() {
+            this.validate();
         }
     }
 }
@@ -39,7 +58,6 @@ export default {
     .register {
         display: flex;
         flex-direction: column;
-        align-items: center;
         position: absolute;
         left: 0;
         right: 0;
@@ -47,34 +65,69 @@ export default {
         bottom: 0;
     }
     .text-field {
-        margin: 16px;
-        border: 1px solid #999;
-        border-radius: 20px;
+        margin-bottom: 0;
+        border-bottom: 1px solid #ececec;
         background: #fff;
         align-items: center;
-        width: 80%;
-        height: 50px;
-        /*box-sizing: border-box;*/
     }
     .text-field input {
         display: block;
-        width: 80%;
+        width: 90%;
+        padding-left: 0;
+        padding-right: 0;
         border: none;
         outline: 0;
+        padding: 26px 16px;
         font-size: 16px;
     }
     .text-field input:focus {
         border: none;
         -webkit-appearance: none;
     }
+    .password-field {
+        margin-top: 15px;
+    }
     .btn {
-        background: yellowgreen;
-        color: #fff;
-        width: 80%;
-        margin: 16px;
+        background: #fff;
+        width: 85%;
+        margin: 16px auto;
         height: 47px;
+        line-height: 47px;
+    }
+    .bottom .btn {
+        margin-top: 30px;
+    }
+    .btn:active {
+        background: #eee;
+    }
+    .btn.fetch:active {
+        background: #eac600;
+    }
+    .btn.fetch {
+        background: #FEDA00;
+        border-radius: 5px;
+        height: 35px;
+        line-height: 35px;
+        width: 150px;
+        margin: 0;
+        margin-right: 10px;
+    }
+    .disclaimer {
+        padding: 16px;
+        background: #fff;
     }
     .link {
-        color: brown;
+        color: #9C9C9C;
+    }
+    .error {
+        margin-left: 20px;
+        color: red;
+    }
+    .fa {
+        color: #DEDEDE;
+    }
+    .bottom {
+        flex: 1;
+        background: #FEDA00;
     }
 </style>

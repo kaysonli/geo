@@ -70,6 +70,9 @@ export default {
         margin-bottom: 0;
         height: 47px;
     }
+    .btn:active {
+        background: #eac600;
+    }
     .register {
         color: brown;
     }
