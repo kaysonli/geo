@@ -21,12 +21,17 @@ body {
   background: #ececec;
 }
 .btn {
-  height: 40px;
-  line-height: 40px;
+  height: 47px;
+  line-height: 47px;
   width: 80%;
   border-radius: 20px;
   text-align: center;
+  background: #FEDA00;
   margin: 20px auto;
+}
+.btn-revert {
+  background: #fff;
+  border: 1px solid #ececec;
 }
 .nav-bar {
   height: 45px;
