@@ -1,12 +1,4 @@
 <template>
-  <!-- <div class="app">
-    <hello></hello>
-    <group>
-      <cell title="vue" value="cool">
-      </cell>
-    </group>
-      	<date-time title="日期"></date-time>
-  </div> -->
   <router-view></router-view>
 </template>
 
@@ -15,7 +7,6 @@ import Hello from './components/Hello.vue'
 import Group from 'vux/components/group'
 import Cell from 'vux/components/cell'
 import DateTime from 'vux/components/datetime'
-// require('vux/vux.css');
 
 export default {
   components: {
@@ -25,8 +16,6 @@ export default {
 </script>
 
 <style>
-@import url("./../node_modules/vux/vux.css");
-@import url("./../node_modules/font-awesome/css/font-awesome.min.css");
 body {
   font-family: 微软雅黑, Helvetica, sans-serif;
   background: #ececec;
@@ -63,14 +52,44 @@ body {
 .center {
   text-align: center;
 }
+
 .text-field {
-  padding-left: 16px;
-  border-bottom: 1px solid gray;
+    margin-bottom: 0;
+    border-bottom: 1px solid #ececec;
+    background: #fff;
+    align-items: center;
+}
+.text-field input {
+    display: block;
+    width: 90%;
+    padding-left: 0;
+    padding-right: 0;
+    border: none;
+    outline: 0;
+    padding: 26px 16px;
+    font-size: 16px;
+}
+.text-field input:focus {
+    border: none;
+    -webkit-appearance: none;
 }
 
-.text-field input {
-  padding: 16px;
-  border: none;
+.page-bottom {
+  flex: 1;
+  background: #FEDA00;
+}
+.page-bottom .btn {
+    margin-top: 30px;
+}
+
+.full-page {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
 }
 
 </style>

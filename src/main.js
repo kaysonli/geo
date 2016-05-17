@@ -8,30 +8,38 @@ import Add from './views/add-device.vue'
 import Input from './views/device-input.vue'
 import Login from './views/login.vue'
 import Register from './views/register.vue'
+import Reset from './views/reset-password.vue'
+import SetNew from './views/set-new.vue'
 
 Vue.use(VueRouter);
 
 // var App = Vue.extend({});
 var router = new VueRouter();
 router.map({
-	'/home': {
-		component: Home
-	},
-	'/list': {
-		component: Device
-	},
-	'/add': {
-		component: Add
-	},
-	'/input': {
-		component: Input
-	},
-	'/login': {
-		component: Login
-	},
-	'/register': {
-		component: Register
-	}
+    '/home': {
+        component: Home
+    },
+    '/list': {
+        component: Device
+    },
+    '/add': {
+        component: Add
+    },
+    '/input': {
+        component: Input
+    },
+    '/login': {
+        component: Login
+    },
+    '/register': {
+        component: Register
+    },
+    '/reset': {
+        component: Reset
+    },
+    '/reset/new': {
+        component: SetNew
+    }
 });
 
 router.start(App, '#app');

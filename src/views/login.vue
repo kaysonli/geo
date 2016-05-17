@@ -9,7 +9,7 @@
         </div>
         <div class="btn" @click="login">登录</div>
         <div class="btn" @click="register">注册</div>
-        <div class="forgot center">忘记密码</div>
+        <div class="forgot center" @click="forget">忘记密码</div>
     </div>
 </template>
 
@@ -25,6 +25,9 @@ export default {
         },
         register() {
             this.$router.go('./register');
+        },
+        forget() {
+            this.$router.go('/reset');
         }
     }
 }
