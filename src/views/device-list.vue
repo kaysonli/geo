@@ -1,15 +1,6 @@
 <template>
-    <header class="nav-bar flex-box">
-        <div class="flex-item" @click="goHome">
-            <i class="fa fa-caret-left"></i>
-        </div>
-        <div class="title flex-item-fill">我的宠管家</div>
-        <div class="flex-item" @click="search">
-            <i class="fa fa-search"></i>
-        </div>
-    </header>
     <div class="device-list">
-        <div class="btn add" @click="addDevice">新建宠管家</div>
+        <div class="btn" @click="addDevice">新建宠觅</div>
         <div class="item-list">
             <div class="item" v-for="dev in devices">
                 <div class="map"></div>
@@ -47,23 +38,25 @@ export default {
     data() {
         return {
             devices: [{
-                name: '黑牛奶',
-                status: 'off',
-                battery: '50%',
-                location: '中国广州越秀区',
-                lastActive: '2016-5-15 10:12:20'
-            }, {
-                name: '哈瑞',
-                status: 'on',
-                battery: '80%',
-                location: '中国深圳南山区',
-                lastActive: '2016-5-15 10:12:20'
-            }, {
-                name: '洛洛',
-                status: 'off',
-                battery: '5%',
-                location: '中国广州越秀区',
-                lastActive: '2016-5-15 10:12:20'
+                "UserName": "",
+                "accessId": 1,
+                "barcode": "201601140025",
+                "devPwd": "",
+                "deviceTypeId": 1,
+                "dt_expire": "2017-01-01 00:00:00",
+                "dt_produce": "2016-01-14 09:52:20",
+                "dt_use": "2016-01-14 09:52:20",
+                "groupId": 0,
+                "id": 33,
+                "isDefault": 1,
+                "name": "0025",
+                "note": "",
+                "protoId": 1,
+                "sign": "201601140000025",
+                "sim": "13534004974",
+                "trackId": 1,
+                "tryDays": 1000,
+                "userId": 1307
             }]
         }
     },
@@ -76,15 +69,21 @@ export default {
         },
         goHome() {
             this.$router.go('/home');
+        },
+        query() {
+            this.$http.get('http://10.0.0.200:3000/devices').then(function(res) {
+                console.log(res);
+                this.devices = res.data.entrySet;
+            }, this);
         }
+    },
+    ready() {
+        document.title = '我的宠觅';
+        this.query();
     }
 }
 </script>
 <style scoped>
-    .add {
-        background: #fff;
-    }
-
     .item-list {
         background: #ececec;
     }

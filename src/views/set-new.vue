@@ -9,7 +9,7 @@
         <div class="error" v-show="error.unmatch">*两次密码不一致</div>
         <div class="error" v-show="error.password">密码格式不正确</div>
         <div class="page-bottom">
-            <div class="btn" @click="submit">完成</div>
+            <div class="btn btn-revert" @click="submit">完成</div>
         </div>
     </form>
 </template>
@@ -44,10 +44,7 @@ export default {
         margin-top: 15px;
     }
     .btn {
-        background: #fff;
         width: 85%;
-        height: 47px;
-        line-height: 47px;
     }
     .btn:active {
         background: #eee;

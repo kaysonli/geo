@@ -11,6 +11,7 @@ import Register from './views/register.vue'
 import Reset from './views/reset-password.vue'
 import SetNew from './views/set-new.vue'
 
+Vue.use(require('vue-resource'))
 Vue.use(VueRouter);
 
 // var App = Vue.extend({});

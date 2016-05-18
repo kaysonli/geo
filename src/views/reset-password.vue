@@ -11,7 +11,7 @@
         </div>
         <div class="error" v-show="error.code">*验证码不正确</div>
         <div class="page-bottom">
-            <div class="btn" @click="next">下一步</div>
+            <div class="btn btn-revert" @click="next">下一步</div>
         </div>
     </form>
 </template>
@@ -48,10 +48,7 @@ export default {
         margin-top: 15px;
     }
     .btn {
-        background: #fff;
         width: 85%;
-        height: 47px;
-        line-height: 47px;
     }
     .btn:active {
         background: #eee;
