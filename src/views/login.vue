@@ -21,7 +21,12 @@ export default {
             this.$els.username.focus();
         },
         login() {
-
+            this.$http.post(this.$root.serverUrl + '/login', {
+                username: this.$els.username.value,
+                password: this.$els.password.value
+            }).then(function(res) {
+                console.log(res);
+            });
         },
         register() {
             this.$router.go('./register');

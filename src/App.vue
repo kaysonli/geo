@@ -11,7 +11,12 @@ import DateTime from 'vux/components/datetime'
 export default {
   components: {
     Hello, Group, Cell, DateTime
-  }
+  },
+  data() {
+    return {
+      serverUrl: 'http://10.0.0.200:3000'
+    }
+  } 
 }
 </script>
 

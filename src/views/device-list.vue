@@ -71,15 +71,30 @@ export default {
             this.$router.go('/home');
         },
         query() {
-            this.$http.get('http://10.0.0.200:3000/devices').then(function(res) {
+            this.$http.get(this.$root.serverUrl + '/devices').then(function(res) {
                 console.log(res);
                 this.devices = res.data.entrySet;
+                window.devices = res.data.entrySet;
+            }, this);
+        },
+        updateStatus() {
+            var devIds = [];
+            this.devices.forEach(function(dev) {
+                devIds.push(dev.id);
+            });
+            this.$http.get(this.$root.serverUrl + '/gps', {
+                devIds: devIds
+            }).then(function(res) {
+                console.log(res);
             }, this);
         }
     },
     ready() {
         document.title = '我的宠觅';
         this.query();
+        setInterval(function() {
+            this.updateStatus();
+        }.bind(this), 10000);
     }
 }
 </script>
