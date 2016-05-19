@@ -1,5 +1,7 @@
 <template>
-  <router-view></router-view>
+  <div>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
@@ -14,7 +16,7 @@ export default {
   },
   data() {
     return {
-      serverUrl: 'http://10.0.0.200:3000'
+      serverUrl: ''
     }
   } 
 }

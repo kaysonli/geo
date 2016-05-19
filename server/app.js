@@ -8,8 +8,10 @@ var cors = require('cors');
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
-passport.use(new LocalStrategy(
-    function(username, password, done) {
+passport.use(new LocalStrategy({
+        passReqToCallback: true
+    },
+    function(req, username, password, done) {
         // User.findOne({ username: username }, function(err, user) {
         //     if (err) {
         //         return done(err); }
@@ -21,7 +23,8 @@ passport.use(new LocalStrategy(
         //     }
         //     return done(null, user);
         // });
-        return done(null, { username: username, password: password });
+        // req.login();
+        return done(null, { username: username});
     }
 ));
 passport.serializeUser(function(user, done) {
@@ -30,7 +33,7 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(id, done) {
     done(null, {
-      username: 'kayson'
+        username: id
     });
 });
 
@@ -52,15 +55,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, '../')));
 
-// app.use(express.session({ secret: 'keyboard cat' }));
-var expressSession = require('express-session');
-app.use(expressSession({secret: 'mySecretKey'}));
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.use(cors({
     origin: '*'
 }));
+var expressSession = require('express-session');
+app.use(expressSession({ secret: 'petmeet' }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 app.use('/', routes);
 app.use('/users', users);

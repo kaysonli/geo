@@ -13,6 +13,8 @@ import SetNew from './views/set-new.vue'
 
 Vue.use(require('vue-resource'))
 Vue.use(VueRouter);
+var filters = require('./filters.js');
+Vue.use(filters);
 
 // var App = Vue.extend({});
 var router = new VueRouter();
@@ -20,7 +22,7 @@ router.map({
     '/home': {
         component: Home
     },
-    '/list': {
+    '/devices': {
         component: Device
     },
     '/add': {

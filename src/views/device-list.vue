@@ -1,13 +1,13 @@
 <template>
-    <div class="device-list">
+    <div class="device-list" v-el:container>
         <div class="btn" @click="addDevice">新建宠觅</div>
         <div class="item-list">
             <div class="item" v-for="dev in devices">
-                <div class="map"></div>
+                <div class="map" id="map-{{dev.id}}"></div>
                 <div class="item-info">
                     <header>
                         <div class="name">{{dev.name}}</div>
-                        <div class="battery"><i class="fa fa-battery-2"></i></div>
+                        <div class="battery"><i class="fa fa-battery-{{dev.power | battery}}"></i></div>
                     </header>
                     <div class="status">
                         <div v-if="dev.status==='off'" class="off">
@@ -18,14 +18,14 @@
                             <span>在线</span>
                         </div>
                     </div>
-                    <div class="location">
+                    <div class="location flex-box">
                         <i class="fa fa-map-marker"></i>
                         <span>{{dev.location}}</span>
                     </div>
                     <div class="time">
                         <i class="fa fa-clock-o"></i>
                         <span>上次上线：</span>
-                        <time>{{dev.lastActive}}</time>
+                        <time>{{dev.gps.dt_gps}}</time>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,8 @@
 export default {
     data() {
         return {
-            devices: [{
+            maps: {},
+            devices: [/*{
                 "UserName": "",
                 "accessId": 1,
                 "barcode": "201601140025",
@@ -57,7 +58,7 @@ export default {
                 "trackId": 1,
                 "tryDays": 1000,
                 "userId": 1307
-            }]
+            }*/]
         }
     },
     methods: {
@@ -70,14 +71,26 @@ export default {
         goHome() {
             this.$router.go('/home');
         },
-        query() {
+        queryDevices() {
             this.$http.get(this.$root.serverUrl + '/devices').then(function(res) {
                 console.log(res);
-                this.devices = res.data.entrySet;
-                window.devices = res.data.entrySet;
+                if(res.data.status === -1) {
+                    this.$router.go('/login');
+                    return;
+                }
+                var devices = [];
+                res.data.entrySet.forEach(function(dev) {
+                    devices.push(dev);
+                    dev.gps = {};
+                    dev.location = '';
+                    dev.power = 0;
+                });
+                this.devices = devices;
+                window.devices = devices;
+                this.queryGPS();
             }, this);
         },
-        updateStatus() {
+        queryGPS() {
             var devIds = [];
             this.devices.forEach(function(dev) {
                 devIds.push(dev.id);
@@ -85,15 +98,64 @@ export default {
             this.$http.get(this.$root.serverUrl + '/gps', {
                 devIds: devIds
             }).then(function(res) {
-                console.log(res);
+                this.updateStatus(res.data.entrySet);
+                setTimeout(function() {
+                    this.initMaps();
+                }.bind(this), 0);
+            }, this);
+        },
+        updateStatus(gpsInfo) {
+            var devMap = {};
+            gpsInfo.forEach(function(gps) {
+                devMap[gps.devId] = gps;
+            });
+            this.devices.forEach(function(dev) {
+                dev.gps = devMap[dev.id];
+            });
+        },
+        initMaps() {
+            this.devices.forEach(function(dev) {
+                 var content = document.createElement('div');
+                content.innerHTML = '';
+                content.className = 'map-marker';
+                var id = 'map-' + dev.id;
+                var el = document.getElementById(id);
+                if(!this.maps[id]) {
+                    this.maps[id] = new AMap.Map(el, {
+                        zoom: 12,
+                        center: [dev.gps.lng, dev.gps.lat]
+                    });
+                    var marker = new AMap.Marker({
+                        position: [dev.gps.lng, dev.gps.lat],
+                        color: 'red',
+                        // content: content,
+                        map: this.maps[id]
+                    });
+                }
+                this.maps[id].setCenter([dev.gps.lng, dev.gps.lat]);
+                AMap.service('AMap.Geocoder',function() {//回调函数
+                    //实例化Geocoder
+                    var geocoder = new AMap.Geocoder();
+                    //TODO: 使用geocoder 对象完成相关功能
+                    var lnglatXY = [dev.gps.lng, dev.gps.lat];//地图上所标点的坐标
+                    geocoder.getAddress(lnglatXY, function(status, result) {
+                        if (status === 'complete' && result.info === 'OK') {
+                            var address = result.regeocode.addressComponent;
+                            var full = address.province + address.district + address.township + address.street + address.streetNumber;
+                            dev.location = full;
+                        } else {
+                           //获取地址失败
+                        }
+                    }); 
+                });
             }, this);
         }
     },
     ready() {
         document.title = '我的宠觅';
-        this.query();
+        this.queryDevices();
         setInterval(function() {
-            this.updateStatus();
+            this.queryGPS();
         }.bind(this), 10000);
     }
 }
@@ -108,6 +170,7 @@ export default {
         background: #fff;
         display: flex;
         padding: 10px;
+        height: 150px;
     }
 
     .item .map {
@@ -117,6 +180,9 @@ export default {
 
     .item-info {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
     }
 
     .item-info header {
@@ -141,6 +207,7 @@ export default {
         color: green;
     }
     .off .fa,
+    .location .fa,
     .time {
         color: gray;
     }

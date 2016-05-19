@@ -26,6 +26,9 @@ export default {
                 password: this.$els.password.value
             }).then(function(res) {
                 console.log(res);
+                if(res.data.status === 1) {
+                    this.$router.go('/devices');
+                }
             });
         },
         register() {
