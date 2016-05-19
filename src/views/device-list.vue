@@ -2,7 +2,7 @@
     <div class="device-list" v-el:container>
         <div class="btn" @click="addDevice">新建宠觅</div>
         <div class="item-list">
-            <div class="item" v-for="dev in devices">
+            <div class="item" v-for="dev in devices" @click="viewDeviceInfo">
                 <div class="map" id="map-{{dev.id}}"></div>
                 <div class="item-info">
                     <header>
@@ -70,6 +70,9 @@ export default {
         },
         goHome() {
             this.$router.go('/home');
+        },
+        viewDeviceInfo(devId) {
+            this.$router.go('devices/' + devId);
         },
         queryDevices() {
             this.$http.get(this.$root.serverUrl + '/devices').then(function(res) {

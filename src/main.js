@@ -3,13 +3,15 @@ import App from './App.vue'
 import VueRouter from 'vue-router'
 
 import Home from './views/home.vue'
-import Device from './views/device-list.vue'
+import DeviceList from './views/device-list.vue'
+import Device from './views/device.vue'
 import Add from './views/add-device.vue'
 import Input from './views/device-input.vue'
 import Login from './views/login.vue'
 import Register from './views/register.vue'
 import Reset from './views/reset-password.vue'
 import SetNew from './views/set-new.vue'
+
 
 Vue.use(require('vue-resource'))
 Vue.use(VueRouter);
@@ -23,6 +25,9 @@ router.map({
         component: Home
     },
     '/devices': {
+        component: DeviceList
+    },
+    '/devices/:id': {
         component: Device
     },
     '/add': {

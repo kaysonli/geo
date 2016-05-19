@@ -25,7 +25,7 @@
 export default {
 	methods: {
 		viewList() {
-			this.$router.go('/list');
+			this.$router.go('/devices');
 		},
 		addDevice() {
 			this.$router.go('/add');
