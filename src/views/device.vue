@@ -77,6 +77,11 @@ export default {
     methods: {
         setRange(index) {
             this.rangeTab = index;
+            if(index === 0) {
+                this.drawPolygon();
+            } else {
+                this.mouseTool.close();
+            }
         },
         setRegion() {
             this.showDefaultToolbar = false;
@@ -101,6 +106,30 @@ export default {
         },
         goBack() {
             this.$router.go('/add');
+        },
+        drawPolygon() {
+            var map = this.map;
+            map.plugin(["AMap.MouseTool"], function() {
+                var mouseTool = this.mouseTool = new AMap.MouseTool(map);
+                //通过rectOptions更改拉框放大时鼠标绘制的矩形框样式
+                // mouseTool.rectZoomIn(rectOptions);     
+                mouseTool.polygon();
+            }.bind(this));
+            AMap.event.addListener(map, 'draw', function(data) {
+                console.log(data);
+            }, this);
+             //在地图中添加MouseTool插件
+            // var mouseTool = new AMap.MouseTool(this.map);
+            // mouseTool.polygon();
+            // AMap.event.addDomListener(document.getElementById('point'), 'click', function() {
+            //     mouseTool.marker({offset:new AMap.Pixel(-14,-11)});
+            // }, false);
+            // AMap.event.addDomListener(document.getElementById('line'), 'click', function() {
+            //     mouseTool.polyline();
+            // }, false);
+            // AMap.event.addDomListener(document.getElementById('polygon'), 'click', function() {
+            //     mouseTool.polygon();
+            // }, false);
         },
         initMap() {
             var map = this.map = new AMap.Map(this.$els.map, {

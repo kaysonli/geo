@@ -23,9 +23,16 @@ export default {
 </script>
 
 <style>
+html, body {
+  height: 100%;
+}
+#app {
+  height: 100%;
+}
 body {
   font-family: 微软雅黑, Helvetica, sans-serif;
-  background: #ececec;
+  margin: 0;
+  padding: 0;
 }
 .btn {
   height: 47px;

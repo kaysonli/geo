@@ -49,6 +49,9 @@ router.map({
         component: SetNew
     }
 });
+router.redirect({
+    '*': '/devices',
+});
 
 router.start(App, '#app');
 /* eslint-disable no-new */

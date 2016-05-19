@@ -1,5 +1,5 @@
 <template>
-    <div class="full-page">
+    <div class="login">
         <img class="logo" src="./resources/images/login.png">
         <div class="text-field">
             <input type="text" placeholder="请输入手机号" v-el:userName>
@@ -41,11 +41,12 @@ export default {
 }
 </script>
 <style scoped>
-    .full-page {
+    .login {
+        height: 100%;
         background: #fff;
     }
     .logo {
-        height: 50%;
+        width: 100%;
     }
     .text-field {
         width: 80%;
