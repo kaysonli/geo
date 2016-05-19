@@ -34,13 +34,13 @@
                 <div class="tool-text">栅栏</div>
             </div>
         </header>
-        <div class="edit-range" v-show="rangeTab">
-            <div class="input-field">
+        <div class="edit-range" v-show="editing">
+            <div class="input-field" v-show="rangeTab">
                 <input type="number" class="radius" placeholder="请输入数值(最大四位数)" v-el:radius>
                 <span>米</span>
             </div>
-            <div class="ok">确定</div>
-            <span class="cancel">取消</span>
+            <div class="ok" @click="onOK">确定</div>
+            <span class="cancel" @click="onCancel">取消</span>
         </div>
         <main>
             <div class="map" v-el:map></div>
@@ -67,25 +67,52 @@ export default {
         return {
             active: 1,
             rangeTab: 0,
+            editing: false,
             mapViews: ['卫星图', '2D平面图', '3D俯视图'],
             showDefaultToolbar: true,
             showRangeToolbar: false,
             map: null,
+            mouseTool: null,
             satelliteLayer: null
         }
     },
     methods: {
         setRange(index) {
+            this.editing = true;
             this.rangeTab = index;
             if(index === 0) {
                 this.drawPolygon();
             } else {
-                this.mouseTool.close();
+                this.mouseTool.close(true);
             }
         },
         setRegion() {
+            // this.editing = true;
             this.showDefaultToolbar = false;
             this.showRangeToolbar = true;
+        },
+        onOK() {
+            this.editing = false;
+            if(this.rangeTab === 0) {
+                var polygon = this.map.getAllOverlays('polygon')[0];
+                var path = polygon.getPath();
+                var points = [];
+                path.forEach(function(node) {
+                    points.push([node.getLng(), node.getLat()]);
+                });
+                console.log(points);
+                this.mouseTool.close(true);
+            }
+            this.showDefaultToolbar = true;
+            this.showRangeToolbar = false
+        },
+        onCancel() {
+            this.editing = false;
+            if(this.rangeTab === 0) {
+                this.mouseTool.close(true);
+            }
+            this.showDefaultToolbar = true;
+            this.showRangeToolbar = false
         },
         viewPath() {
 
