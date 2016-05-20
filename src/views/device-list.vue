@@ -1,8 +1,10 @@
 <template>
     <div class="device-list" v-el:container>
-        <div class="btn" @click="addDevice">新建宠觅</div>
+        <div class="btn" v-touch:tap="addDevice">新建宠觅</div>
         <div class="item-list">
-            <div class="item" v-for="dev in devices" @click="viewDeviceInfo">
+            <div class="item" v-for="dev in devices" 
+                v-bind:class="{'removing': dev.removing}"
+                v-touch:tap="viewDeviceInfo(dev, $event)" v-touch:swipe="onSwipe(dev, $event)">
                 <div class="map" id="map-{{dev.id}}"></div>
                 <div class="item-info">
                     <header>
@@ -27,6 +29,9 @@
                         <span>上次上线：</span>
                         <time>{{dev.gps.dt_gps}}</time>
                     </div>
+                </div>
+                <div class="btn-remove" v-touch:tap.stop="removeDevice(dev, $index)">
+                    <span>删除设备</span>
                 </div>
             </div>
         </div>
@@ -71,8 +76,14 @@ export default {
         goHome() {
             this.$router.go('/home');
         },
-        viewDeviceInfo(devId) {
-            this.$router.go('devices/' + devId);
+        onSwipe(dev, evt) {
+            dev.removing = evt.direction === 2;
+        },
+        viewDeviceInfo(dev, evt) {
+            this.$router.go('devices/' + dev.id);
+        },
+        removeDevice(dev, index) {
+            this.devices.splice(index, 1);
         },
         queryDevices() {
             this.$http.get(this.$root.serverUrl + '/devices').then(function(res) {
@@ -87,6 +98,7 @@ export default {
                     dev.gps = {};
                     dev.location = '';
                     dev.power = 0;
+                    dev.removing = false;
                 });
                 this.devices = devices;
                 window.devices = devices;
@@ -157,9 +169,9 @@ export default {
     ready() {
         document.title = '我的宠觅';
         this.queryDevices();
-        setInterval(function() {
-            this.queryGPS();
-        }.bind(this), 10000);
+        // setInterval(function() {
+        //     this.queryGPS();
+        // }.bind(this), 10000);
     }
 }
 </script>
@@ -174,6 +186,9 @@ export default {
         display: flex;
         padding: 10px;
         height: 150px;
+        transition: left 0.2s;
+        position: relative;
+        left: 0;
     }
 
     .item .map {
@@ -214,5 +229,25 @@ export default {
     .time {
         color: gray;
     }
-
+    
+    .item.removing {
+        /*position: relative;*/
+        left: -120px;
+    }
+    .btn-remove {
+        position: absolute;
+        width: 120px;
+        right: -240px;
+        top: 0;
+        height: 100%;
+        background: #FEDA00;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: right 0.2s;
+    }
+    .removing .btn-remove {
+        right: -120px;
+    }
 </style>

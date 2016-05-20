@@ -16,6 +16,8 @@ import RangeBar from './components/range-bar.vue'
 
 Vue.use(require('vue-resource'))
 Vue.use(VueRouter);
+var VueTouch = require('vue-touch')
+Vue.use(VueTouch)
 var filters = require('./filters.js');
 Vue.use(filters);
 
