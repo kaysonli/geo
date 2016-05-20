@@ -60,17 +60,24 @@ export default {
             this.drawPolygon();
         },
         'draw-complete': function() {
+            if(!this.mouseTool) {
+                return;
+            }
             var polygon = this.map.getAllOverlays('polygon')[0];
-            var path = polygon.getPath();
             var points = [];
-            path.forEach(function(node) {
-                points.push([node.getLng(), node.getLat()]);
-            });
+            if(polygon) {
+                var path = polygon.getPath();
+                path.forEach(function(node) {
+                    points.push([node.getLng(), node.getLat()]);
+                });
+            }
             console.log(points);
             this.mouseTool.close(true);
         },
         'draw-cancel': function() {
-            this.mouseTool.close(true);
+            if(this.mouseTool) {
+                this.mouseTool.close(true);
+            }
         },
         'set-radius': function(radius) {
             console.log(radius);
@@ -78,7 +85,7 @@ export default {
     },
     methods: {
         setRegion() {
-            
+            this.$router.go(this.$route.path + '/range');
         },
         viewPath() {
 
@@ -104,9 +111,11 @@ export default {
             var map = this.map;
             map.plugin(["AMap.MouseTool"], function() {
                 var mouseTool = this.mouseTool = new AMap.MouseTool(map);
-                //通过rectOptions更改拉框放大时鼠标绘制的矩形框样式
-                // mouseTool.rectZoomIn(rectOptions);     
-                mouseTool.polygon();
+                mouseTool.polygon({
+                    fillOpacity: 0,
+                    strokeColor: '#f00',
+                    fillColor: '#fff'
+                });
             }.bind(this));
             AMap.event.addListener(map, 'draw', function(data) {
                 console.log(data);
@@ -167,6 +176,7 @@ export default {
         flex: 1;
         text-align: center;
         height: 100%;
+        margin-top: 5px;
     }
     .tool .fa {
         color: #FEDA00;
@@ -188,11 +198,8 @@ export default {
         flex: 1;
         text-align: center;
     }
-    .active, {
+    .active {
         background: #FEDA00;
-    }
-    .active .fa {
-        color: #fff;
     }
     main,
     .map {
