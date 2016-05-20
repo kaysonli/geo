@@ -44,6 +44,11 @@ export default {
             type: Array
         }
     },
+    route: {
+        data(transition) {
+            
+        }
+    },
     data() {
         return {
             active: 1,
@@ -80,6 +85,7 @@ export default {
             }
         },
         'set-radius': function(radius) {
+            this.drawCircle(radius);
             console.log(radius);
         }
     },
@@ -106,6 +112,22 @@ export default {
         },
         goBack() {
             this.$router.go('/add');
+        },
+        drawCircle(radius) {
+            if(!this.circle) {
+                this.circle = new AMap.Circle({
+                    center: this.map.getCenter(),
+                    radius: radius, //半径
+                    strokeColor: "#ececec", //线颜色
+                    strokeOpacity: 1, //线透明度
+                    strokeWeight: 0, //线粗细度
+                    fillColor: "#333", //填充颜色
+                    fillOpacity: 0.45//填充透明度
+                });
+                this.circle.setMap(this.map);
+            } else {
+                this.circle.setRadius(radius);
+            }
         },
         drawPolygon() {
             var map = this.map;
@@ -152,6 +174,7 @@ export default {
         }
     },
     ready() {
+        console.log(this.$route.params.device);
         setTimeout(function() {
             this.initMap();
         }.bind(this), 0);
@@ -204,12 +227,5 @@ export default {
     main,
     .map {
         height: 100%;
-    }
-    .ok {
-        background: #fff;
-        padding: 6px;
-        width: 45px;
-        text-align: center;
-        border-radius: 3px;
     }
 </style>

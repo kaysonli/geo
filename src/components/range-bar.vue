@@ -2,12 +2,12 @@
   <div class="range-bar">
     <header class="toolbar flex-box">
           <div class="tool" 
-              @click="onTabChange(0)"
+              v-touch:tap="onTabChange(0)"
               v-bind:class="{'active': (0 === tabIndex)}">
               <div class="fa fa-pencil"></div>
               <div class="tool-text">范围</div>
           </div>
-          <div class="tool" @click="onTabChange(1)" v-bind:class="{'active': (1 === tabIndex)}">
+          <div class="tool" v-touch:tap="onTabChange(1)" v-bind:class="{'active': (1 === tabIndex)}">
               <div class="fa fa-map-signs"></div>
               <div class="tool-text">栅栏</div>
           </div>
@@ -17,8 +17,8 @@
             <input type="number" class="radius" placeholder="请输入数值(最大四位数)" v-el:radius>
             <span>米</span>
         </div>
-        <div class="ok" @click="onOK">确定</div>
-        <span class="cancel" @click="onCancel">取消</span>
+        <div class="ok" v-touch:tap="onOK">确定</div>
+        <span class="cancel" v-touch:tap="onCancel">取消</span>
     </div>
   </div>
 </template>
@@ -123,4 +123,11 @@ export default {
       position: relative;
       right: 20px;
   }
+  .ok {
+    background: #fff;
+    padding: 6px;
+    width: 45px;
+    text-align: center;
+    border-radius: 3px;
+}
 </style>

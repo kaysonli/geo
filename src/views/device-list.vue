@@ -66,6 +66,11 @@ export default {
             }*/]
         }
     },
+    route: {
+        data(transition) {
+            
+        }
+    },
     methods: {
         addDevice() {
             this.$router.go('/add');
@@ -80,7 +85,13 @@ export default {
             dev.removing = evt.direction === 2;
         },
         viewDeviceInfo(dev, evt) {
-            this.$router.go('devices/' + dev.id);
+            this.$router.go({
+                name: 'device-info',
+                params: {
+                    id: dev.id,
+                    device: dev
+                }
+            });
         },
         removeDevice(dev, index) {
             this.devices.splice(index, 1);
@@ -231,7 +242,6 @@ export default {
     }
     
     .item.removing {
-        /*position: relative;*/
         left: -120px;
     }
     .btn-remove {
