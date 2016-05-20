@@ -1,6 +1,6 @@
 <template>
     <div class="full-page">
-        <header class="toolbar flex-box" v-show="showDefaultToolbar">
+        <header class="toolbar flex-box">
             <div class="tool" @click="setRegion">
                 <div class="fa fa-map-signs"></div>
                 <div class="tool-text">围栏</div>
@@ -22,26 +22,7 @@
                 <div class="tool-text">设置</div>
             </div>
         </header>
-        <header class="toolbar range flex-box" v-show="showRangeToolbar">
-            <div class="tool" 
-                @click="setRange(0)"
-                v-bind:class="{'active': (0 === rangeTab)}">
-                <div class="fa fa-pencil"></div>
-                <div class="tool-text">范围</div>
-            </div>
-            <div class="tool" @click="setRange(1)" v-bind:class="{'active': (1 === rangeTab)}">
-                <div class="fa fa-map-signs"></div>
-                <div class="tool-text">栅栏</div>
-            </div>
-        </header>
-        <div class="edit-range" v-show="editing">
-            <div class="input-field" v-show="rangeTab">
-                <input type="number" class="radius" placeholder="请输入数值(最大四位数)" v-el:radius>
-                <span>米</span>
-            </div>
-            <div class="ok" @click="onOK">确定</div>
-            <span class="cancel" @click="onCancel">取消</span>
-        </div>
+        <router-view></router-view>
         <main>
             <div class="map" v-el:map></div>
         </main>
@@ -69,50 +50,35 @@ export default {
             rangeTab: 0,
             editing: false,
             mapViews: ['卫星图', '2D平面图', '3D俯视图'],
-            showDefaultToolbar: true,
-            showRangeToolbar: false,
             map: null,
             mouseTool: null,
             satelliteLayer: null
         }
     },
+    events: {
+        'draw-start': function() {
+            this.drawPolygon();
+        },
+        'draw-complete': function() {
+            var polygon = this.map.getAllOverlays('polygon')[0];
+            var path = polygon.getPath();
+            var points = [];
+            path.forEach(function(node) {
+                points.push([node.getLng(), node.getLat()]);
+            });
+            console.log(points);
+            this.mouseTool.close(true);
+        },
+        'draw-cancel': function() {
+            this.mouseTool.close(true);
+        },
+        'set-radius': function(radius) {
+            console.log(radius);
+        }
+    },
     methods: {
-        setRange(index) {
-            this.editing = true;
-            this.rangeTab = index;
-            if(index === 0) {
-                this.drawPolygon();
-            } else {
-                this.mouseTool.close(true);
-            }
-        },
         setRegion() {
-            // this.editing = true;
-            this.showDefaultToolbar = false;
-            this.showRangeToolbar = true;
-        },
-        onOK() {
-            this.editing = false;
-            if(this.rangeTab === 0) {
-                var polygon = this.map.getAllOverlays('polygon')[0];
-                var path = polygon.getPath();
-                var points = [];
-                path.forEach(function(node) {
-                    points.push([node.getLng(), node.getLat()]);
-                });
-                console.log(points);
-                this.mouseTool.close(true);
-            }
-            this.showDefaultToolbar = true;
-            this.showRangeToolbar = false
-        },
-        onCancel() {
-            this.editing = false;
-            if(this.rangeTab === 0) {
-                this.mouseTool.close(true);
-            }
-            this.showDefaultToolbar = true;
-            this.showRangeToolbar = false
+            
         },
         viewPath() {
 
@@ -197,14 +163,6 @@ export default {
         justify-content: space-around;
         z-index: 1;
     }
-    .toolbar.range .tool{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .toolbar.range .fa {
-        margin-right: 10px;
-    }
     .tool {
         flex: 1;
         text-align: center;
@@ -230,8 +188,7 @@ export default {
         flex: 1;
         text-align: center;
     }
-    .active,
-    .edit-range {
+    .active, {
         background: #FEDA00;
     }
     .active .fa {
@@ -240,36 +197,6 @@ export default {
     main,
     .map {
         height: 100%;
-    }
-
-    .edit-range {
-        background: #FEDA00;
-        height: 55px;
-        position: absolute;
-        top: 50px;
-        z-index: 1;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-    }
-    .input-field {
-        background: #fff;
-        padding: 5px;
-        border-radius: 3px;
-    }
-    .input-field span {
-        margin-right: 10px;
-    }
-    .radius {
-        height: 20px;
-        border: none;
-        outline: 0;
-    }
-    .radius:after {
-        content: '米';
-        position: relative;
-        right: 20px;
     }
     .ok {
         background: #fff;

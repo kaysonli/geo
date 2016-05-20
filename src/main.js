@@ -11,6 +11,7 @@ import Login from './views/login.vue'
 import Register from './views/register.vue'
 import Reset from './views/reset-password.vue'
 import SetNew from './views/set-new.vue'
+import RangeBar from './components/range-bar.vue'
 
 
 Vue.use(require('vue-resource'))
@@ -28,7 +29,12 @@ router.map({
         component: DeviceList
     },
     '/devices/:id': {
-        component: Device
+        component: Device,
+        subRoutes: {
+            '/range': {
+                component: RangeBar
+            }
+        }
     },
     '/add': {
         component: Add
