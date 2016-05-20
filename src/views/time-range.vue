@@ -1,6 +1,10 @@
 <template>
     <div class="full-page">
-        <scroller></scroller>
+        <div class="picker">
+        	<scroller></scroller>
+	        <scroller></scroller>
+	        <scroller></scroller>
+        </div>
     </div>
 </template>
 
@@ -16,5 +20,7 @@ export default {
 }
 </script>
 <style>
-    
+    .picker {
+    	display: flex;
+    }
 </style>

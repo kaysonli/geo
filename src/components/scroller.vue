@@ -1,9 +1,14 @@
 <template>
-  <div class="scroller-component" @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd">
-    <div class="scroller-mask" data-role="mask"></div>
+  <div class="scroller-component">
+    <div class="scroller-mask" data-role="mask" 
+      @touchstart="onTouchStart" 
+      @touchmove="onTouchMove" 
+      @touchend="onTouchEnd"></div>
     <div class="scroller-indicator" data-role="indicator"></div>
     <div class="scroller-content" v-bind:style="{ transform: 'translate3D(0, ' + top + 'px, 0)' }">
-      <div class="scroller-item" v-for="n in 12" data-value="{{n+1}}">{{n+1}}</div>
+      <div class="scroller-item" 
+        v-bind:class="{'scroller-item-selected': (n===selectedIndex)}"
+        v-for="n in items" data-value="{{n+2000}}">{{n+2000}}</div>
     </div>
   </div>
 </template>
@@ -13,25 +18,42 @@ export default {
   data () {
     return {
       top: 0,
-      items: [{
-        text: '',
-        value: 1
-      }],
-      // Note: modifying `msg` below will not cause changes to occur with
-      // hot-reload. As reloaded components preserve their initial state,
-      // modifying these values will have no effect.
-      msg: 'Hello World!'
+      selectedIndex: 0,
+      items: 8
     }
   },
   methods: {
+    setValue(value) {
+
+    },
+    getValue() {
+      return this
+    },
     onTouchStart(evt) {
-      this.startY = evt.touches[0].clientY;
+      this.lastY = evt.touches[0].clientY;
     },
     onTouchMove(evt) {
+      var unit = 34;
+      var max = unit * 3;
+      var min = 0;
       var y = evt.touches[0].clientY;
+      var offset = y - this.lastY;
+      this.lastY = y;
+      this.top += offset;
+      if(this.top >= max) {
+        this.top = max;
+      }
+      if(this.top < min) {
+
+      }
     },
     onTouchEnd(evt) {
-
+      var unit = 34;
+      var zero = unit * 3;
+      var m = Math.round(this.top / unit);
+      this.top = m * unit;
+      this.selectedIndex = (zero - this.top) / unit;
+      console.log(selectedIndex);
     }
   }
 }
