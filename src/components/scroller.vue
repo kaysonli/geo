@@ -147,7 +147,8 @@ export default {
     background-image: linear-gradient(180deg,hsla(0,0%,100%,.95),hsla(0,0%,100%,.6)),linear-gradient(0deg,hsla(0,0%,100%,.95),hsla(0,0%,100%,.6));
     background-position: top,bottom;
     background-size: 100% 102px;
-    background-repeat: no-repeat
+    background-repeat: no-repeat;
+    background: none;
 }
 
 .scroller-item {
@@ -169,6 +170,8 @@ export default {
     background-image: linear-gradient(180deg,#d0d0d0,#d0d0d0,transparent,transparent),linear-gradient(0deg,#d0d0d0,#d0d0d0,transparent,transparent);
     background-position: top,bottom;
     background-size: 100% 1px;
-    background-repeat: no-repeat
+    background-repeat: no-repeat;
+    background: #fff;
+    z-index: -1;
 }
 </style>

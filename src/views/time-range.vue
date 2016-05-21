@@ -167,6 +167,7 @@ export default {
     display: inline-block;
     width: 20px;
     height: 20px;
+    margin-right: 5px;
   }
 
   .time-start,
@@ -193,5 +194,9 @@ export default {
     right: 0;
     top: 5px;
     font-weight: bold;
+  }
+  .picker,
+  .range-header {
+  	border-bottom: 1px solid gray;
   }
 </style>
