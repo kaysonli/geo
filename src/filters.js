@@ -11,6 +11,16 @@ exports.install = function(Vue) {
         return value.toFixed(decimalPlace || 2);
     });
 
+    Vue.filter('padding', function(value, direction, char, length) {
+        var str = value + '';
+        if(str.length >= length) {
+            return;
+        }
+        if(direction === 'left') {
+            
+        }
+    });
+
     //Format date object.
     Vue.filter('dateformat', function(value, format) {
         var year = value.getFullYear();

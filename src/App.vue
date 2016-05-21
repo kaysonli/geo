@@ -20,9 +20,7 @@ export default {
     }
   },
   ready() {
-    document.querySelector('body').addEventListener('touchstart', function (ev) {
-      ev.preventDefault();
-    });
+    
   }
 }
 </script>

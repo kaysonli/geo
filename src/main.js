@@ -37,6 +37,9 @@ router.map({
         subRoutes: {
             '/range': {
                 component: RangeBar
+            },
+            '/track': {
+                component: TimeRange
             }
         }
     },
@@ -57,9 +60,6 @@ router.map({
     },
     '/reset/new': {
         component: SetNew
-    },
-    '/track': {
-        component: TimeRange
     }
 });
 router.redirect({

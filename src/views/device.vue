@@ -46,7 +46,8 @@ export default {
     },
     route: {
         data(transition) {
-            
+            console.log(this.trackLine)
+            // transition.next();
         }
     },
     data() {
@@ -76,7 +77,6 @@ export default {
                     points.push([node.getLng(), node.getLat()]);
                 });
             }
-            console.log(points);
             this.mouseTool.close(true);
         },
         'draw-cancel': function() {
@@ -86,15 +86,22 @@ export default {
         },
         'set-radius': function(radius) {
             this.drawCircle(radius);
-            console.log(radius);
+        },
+        'timerange': function(range) {
+            history.go(-1);
+            var lineArr = [ [ 114.050751, 22.666425 ], [ 114.066887, 22.645197 ], [ 114.05899, 22.611923 ], [ 114.024315, 22.588151 ], [ 113.992729, 22.599879 ], [ 113.992729, 22.633156 ], [ 114.050751, 22.666425 ] ];
+            this.drawPath(lineArr);
         }
     },
     methods: {
         setRegion() {
+            if(this.trackLine) {
+                this.trackLine.setMap(null);
+            }
             this.$router.go(this.$route.path + '/range');
         },
         viewPath() {
-
+            this.$router.go(this.$route.path + '/track');
         },
         viewAlarms() {
 
@@ -155,6 +162,20 @@ export default {
             //     mouseTool.polygon();
             // }, false);
         },
+        drawPath(lineArr) {
+            if(!this.trackLine) {
+                this.trackLine = new AMap.Polyline({
+                    path: lineArr,          //设置线覆盖物路径
+                    strokeColor: "#FEDA00", //线颜色
+                    strokeOpacity: 1,       //线透明度
+                    strokeWeight: 5,        //线宽
+                    strokeStyle: "solid",   //线样式
+                    strokeDasharray: [10, 5] //补充线样式
+                });
+            }
+            this.trackLine.setMap(this.map);
+            this.trackLine.setPath(lineArr);
+        },
         initMap() {
             var map = this.map = new AMap.Map(this.$els.map, {
                 zoom: 12,
@@ -171,6 +192,14 @@ export default {
             //     map.addControl(type);
             // });
             
+        },
+        clearLayers() {
+            if(this.trackLine) {
+                this.trackLine.setMap(null);
+            }
+            if(this.circle) {
+                this.circle.setMap(null);
+            }
         }
     },
     ready() {
