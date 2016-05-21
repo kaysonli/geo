@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var serveIndex = require('serve-index');
 var cors = require('cors');
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
@@ -54,6 +55,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, '../')));
+
+// Serve URLs like /ftp/thing as public/ftp/thing
+app.use('/michong', serveIndex(path.join(__dirname, '../michong'), {'icons': true}));
 
 app.use(cors({
     origin: '*'
