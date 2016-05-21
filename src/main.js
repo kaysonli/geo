@@ -13,6 +13,7 @@ import Reset from './views/reset-password.vue'
 import SetNew from './views/set-new.vue'
 import RangeBar from './components/range-bar.vue'
 import TimeRange from './views/time-range.vue'
+import Warnings from './views/warnings.vue'
 
 
 Vue.use(require('vue-resource'))
@@ -60,6 +61,9 @@ router.map({
     },
     '/reset/new': {
         component: SetNew
+    },
+    'warnings': {
+        component: Warnings
     }
 });
 router.redirect({

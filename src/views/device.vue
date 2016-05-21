@@ -1,15 +1,15 @@
 <template>
     <div class="full-page">
         <header class="toolbar flex-box">
-            <div class="tool" @click="setRegion">
+            <div class="tool" v-touch:tap="setRegion">
                 <div class="fa fa-map-signs"></div>
                 <div class="tool-text">围栏</div>
             </div>
-            <div class="tool" @click="viewPath">
+            <div class="tool" v-touch:tap="viewPath">
                 <div class="fa fa-paw"></div>
                 <div class="tool-text">轨迹</div>
             </div>
-            <div class="tool" @click="viewAlarms">
+            <div class="tool" v-touch:tap="viewAlarms">
                 <div class="fa fa-warning"></div>
                 <div class="tool-text">报警</div>
             </div>
@@ -17,7 +17,7 @@
                 <div class="fa fa-map-marker"></div>
                 <div class="tool-text">实时定位</div>
             </div>
-            <div class="tool" @click="configure">
+            <div class="tool" v-touch:tap="configure">
                 <div class="fa fa-gear"></div>
                 <div class="tool-text">设置</div>
             </div>
@@ -104,7 +104,7 @@ export default {
             this.$router.go(this.$route.path + '/track');
         },
         viewAlarms() {
-
+            this.$router.go('/warnings');
         },
         configure() {
 
@@ -149,18 +149,6 @@ export default {
             AMap.event.addListener(map, 'draw', function(data) {
                 console.log(data);
             }, this);
-             //在地图中添加MouseTool插件
-            // var mouseTool = new AMap.MouseTool(this.map);
-            // mouseTool.polygon();
-            // AMap.event.addDomListener(document.getElementById('point'), 'click', function() {
-            //     mouseTool.marker({offset:new AMap.Pixel(-14,-11)});
-            // }, false);
-            // AMap.event.addDomListener(document.getElementById('line'), 'click', function() {
-            //     mouseTool.polyline();
-            // }, false);
-            // AMap.event.addDomListener(document.getElementById('polygon'), 'click', function() {
-            //     mouseTool.polygon();
-            // }, false);
         },
         drawPath(lineArr) {
             if(!this.trackLine) {
@@ -184,14 +172,6 @@ export default {
             var satellite = this.satelliteLayer = new AMap.TileLayer.Satellite();
             satellite.setMap(this.map);
             satellite.hide();
-            // map.plugin(["AMap.MapType"],function(){
-            //     //地图类型切换
-            //     var type= new AMap.MapType({
-            //         defaultType:0 //使用2D地图
-            //     });
-            //     map.addControl(type);
-            // });
-            
         },
         clearLayers() {
             if(this.trackLine) {

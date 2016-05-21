@@ -70,5 +70,23 @@ router.get('/gps', function(req, res, next) {
     );
 });
 
+router.get('/warnings', function(req, res, next) {
+    var client = request.createClient(serverUrl);
+    var data = {
+        "actionName":"QueryHistoryAlarm",
+        "appId": appId,
+        "appSecret": appSecret,
+        "paramsSet":[{"name":"userId","value":"1307"},{"compare":"%3E%3D","name":"dt_alarm","value":"2016-05-14 00:00:00"}],
+        "status":0,
+        "timeStamp":183727132
+    };
+    client.post('WebAPI.ashx/?=', data,
+        function(error, response, body) {
+            console.log(error);
+            res.send(body);
+        }
+    );
+})
+
 
 module.exports = router;
