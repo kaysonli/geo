@@ -14,6 +14,7 @@ import SetNew from './views/set-new.vue'
 import RangeBar from './components/range-bar.vue'
 import TimeRange from './views/time-range.vue'
 import Warnings from './views/warnings.vue'
+import Settings from './views/settings.vue'
 
 
 Vue.use(require('vue-resource'))
@@ -64,6 +65,9 @@ router.map({
     },
     'warnings': {
         component: Warnings
+    },
+    'settings': {
+        component: Settings
     }
 });
 router.redirect({
