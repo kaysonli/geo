@@ -18,7 +18,12 @@ export default {
     return {
       serverUrl: ''
     }
-  } 
+  },
+  ready() {
+    document.querySelector('body').addEventListener('touchstart', function (ev) {
+      ev.preventDefault();
+    });
+  }
 }
 </script>
 

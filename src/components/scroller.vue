@@ -1,59 +1,115 @@
 <template>
-  <div class="scroller-component">
+  <div class="scroller-component" v-bind:style="{height: height + 'px'}">
     <div class="scroller-mask" data-role="mask" 
+      v-bind:style="{backgroundSize: '100% ' + indicatorTop + 'px'}"
       @touchstart="onTouchStart" 
-      @touchmove="onTouchMove" 
+      @touchmove.prevent="onTouchMove" 
       @touchend="onTouchEnd"></div>
-    <div class="scroller-indicator" data-role="indicator"></div>
+    <div class="scroller-indicator" data-role="indicator"
+     v-bind:style="{height: itemHeight + 'px', top: indicatorTop + 'px'}"></div>
     <div class="scroller-content" v-bind:style="{ transform: 'translate3D(0, ' + top + 'px, 0)' }">
       <div class="scroller-item" 
-        v-bind:class="{'scroller-item-selected': (n===selectedIndex)}"
-        v-for="n in items" data-value="{{n+2000}}">{{n+2000}}</div>
+        v-bind:class="{'scroller-item-selected': (item.value === value)}"
+        v-bind:style="{height: itemHeight + 'px'}"
+        v-for="item in items" data-value="{{ item.value }}">{{ item.text }}</div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    items: {
+      type: Array,
+      default() { return [] },
+    },
+    value: {
+      twoWay: true
+    },
+    ticks: {
+      type: Number,
+      default() {
+        return 5;
+      }
+    },
+    itemHeight: {
+      type: Number,
+      default() {
+        return 34;
+      }
+    }
+  },
   data () {
     return {
-      top: 0,
-      selectedIndex: 0,
-      items: 8
+      top: 0
+    }
+  },
+  computed: {
+    height() {
+      return this.itemHeight * this.ticks;
+    },
+    indicatorTop() {
+      return (this.ticks - 1) / 2 * this.itemHeight;
+    }
+  },
+  watch: {
+    'value': function(val, oldVal) {
+      var index = -1;
+      for(var i = 0; i < this.items.length; i++) {
+        if(this.items[i].value === val) {
+          index = i;
+          break;
+        }
+      }
+      var unit = this.itemHeight;
+      var start = (this.ticks - 1) / 2;
+      if(index > -1) {
+        this.top = (start - index) * unit;
+      }
+    },
+    'items': function(val, oldVal) {
+      var index = -1;
+      for(var i = 0; i < val.length; i++) {
+        if(val[i].value === this.value) {
+          index = i;
+          break;
+        }
+      }
+      if(index < 0) {
+        this.value = val[val.length - 1].value;
+      }
     }
   },
   methods: {
-    setValue(value) {
-
-    },
-    getValue() {
-      return this
-    },
     onTouchStart(evt) {
       this.lastY = evt.touches[0].clientY;
     },
     onTouchMove(evt) {
-      var unit = 34;
-      var max = unit * 3;
-      var min = 0;
+      var unit = this.itemHeight;
+      var middle = (this.ticks - 1) / 2;
+      var max = unit * middle;
+      var min = max - (this.items.length - 1) * unit;
       var y = evt.touches[0].clientY;
       var offset = y - this.lastY;
       this.lastY = y;
-      this.top += offset;
-      if(this.top >= max) {
-        this.top = max;
-      }
-      if(this.top < min) {
-
+      if(offset > 0) {
+        if(this.top + offset < max) {
+          this.top += offset;
+        }
+      } else {
+        if(this.top + offset > min) {
+          this.top += offset;
+        }
       }
     },
     onTouchEnd(evt) {
-      var unit = 34;
-      var zero = unit * 3;
+      var unit = this.itemHeight;
+      var middle = (this.ticks - 1) / 2;
+      var zero = unit * middle;
       var m = Math.round(this.top / unit);
       this.top = m * unit;
-      this.selectedIndex = (zero - this.top) / unit;
-      console.log(selectedIndex);
+      console.log('top', this.top);
+      this.value = this.items[(zero - this.top) / unit].value;
     }
   }
 }
