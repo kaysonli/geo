@@ -88,5 +88,42 @@ router.get('/warnings', function(req, res, next) {
     );
 })
 
+router.post('/settings', function(req, res, next) {
+    var client = request.createClient(serverUrl);
+    var devId = req.params.devId;
+    var option = req.params.option;
+    var cmd = {
+        uploadFreq: '309',//60s
+        geoMode: '310',//0:GPS, 1: station,2:GPS+station
+        timeZone: '313',//timezone, (direction:0=east|1=west, hour, minute)
+        led: '303',//0=off, 1=on
+        alarm: '307',//value=10000010,0000;value=11000010,0000;value=11000010,0000;value=11000000,0000
+        waken: '620',//0,value,0000
+    }
+    var data = {
+        "actionName": "DevCMD",
+        "appId": appId,
+        "appSecret": appSecret,
+        "paramsSet": [{
+            "name": "devId",
+            "value": devId
+        }, {
+            "name": "cmd",
+            "value": "309"
+        }, {
+            "name": "param",
+            "value": "90,0000"
+        }],
+        "status": 0,
+        "timeStamp": 183727132
+    };
+    client.post('WebAPI.ashx/?=', data,
+        function(error, response, body) {
+            console.log(error);
+            res.send(body);
+        }
+    );
+});
+
 
 module.exports = router;
