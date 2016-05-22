@@ -86,7 +86,37 @@ router.get('/warnings', function(req, res, next) {
             res.send(body);
         }
     );
-})
+});
+
+router.get('/tracks/:id', function(req, res, next) {
+    var client = request.createClient(serverUrl);
+    var data = {
+        "actionName": "HistoryGPS",
+        "appId": appId,
+        "appSecret": appSecret,
+        "paramsSet": [{
+            "name": "devId",
+            "value": req.params.id
+        }, {
+            "name": "dt_start",
+            "value": req.query.start
+        }, {
+            "name": "dt_end",
+            "value": req.query.end
+        }, {
+            "name": "type",
+            "value": "1"
+        }],
+        "status": 0,
+        "timeStamp": 183727132
+    };
+    client.post('WebAPI.ashx/?=', data,
+        function(error, response, body) {
+            console.log(error);
+            res.send(body);
+        }
+    );
+});
 
 router.post('/settings', function(req, res, next) {
     var client = request.createClient(serverUrl);

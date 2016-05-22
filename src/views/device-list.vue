@@ -71,6 +71,17 @@ export default {
             
         }
     },
+    events: {
+        'devices-ready': function(devices) {
+            this.devices = devices;
+        },
+        'gps-ready': function(data) {
+            this.updateStatus(data);
+            setTimeout(function() {
+                this.initMaps();
+            }.bind(this), 0);
+        }
+    },
     methods: {
         addDevice() {
             this.$router.go('/add');
@@ -85,6 +96,7 @@ export default {
             dev.removing = evt.direction === 2;
         },
         viewDeviceInfo(dev, evt) {
+            this.$root.currentDevice = dev;
             this.$router.go({
                 name: 'device-info',
                 params: {
@@ -179,7 +191,7 @@ export default {
     },
     ready() {
         document.title = '我的宠觅';
-        this.queryDevices();
+        // this.queryDevices();
         // setInterval(function() {
         //     this.queryGPS();
         // }.bind(this), 10000);

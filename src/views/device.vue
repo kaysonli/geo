@@ -25,6 +25,8 @@
         <router-view></router-view>
         <main>
             <div class="map" v-el:map></div>
+            <div class="locate" v-touch:tap="setCenter">
+            </div>
         </main>
         <footer class="map-views flex-box">
             <div v-for="item in mapViews" class="map-view" 
@@ -35,6 +37,7 @@
 </template>
 
 <script>
+import utils from './../utils.js';
 export default {
     props: {
         devId: {
@@ -89,11 +92,33 @@ export default {
         },
         'timerange': function(range) {
             history.go(-1);
+            var format = 'Y-m-d H:i:s';
+            var start = utils.dateFormat(new Date(range.from), format);
+            var end = utils.dateFormat(new Date(range.to), format);
+            this.getHistoryGPS(this.$route.params.id, start, end);
             var lineArr = [ [ 114.050751, 22.666425 ], [ 114.066887, 22.645197 ], [ 114.05899, 22.611923 ], [ 114.024315, 22.588151 ], [ 113.992729, 22.599879 ], [ 113.992729, 22.633156 ], [ 114.050751, 22.666425 ] ];
-            this.drawPath(lineArr);
+            // this.drawPath(lineArr);
+        },
+        'devices-ready': function(devices) {
+            this.devices = devices;
+        },
+        'gps-ready': function(data) {
+            this.updateStatus(this.devices, data);
+            this.devices.forEach(function(dev) {
+                if(dev.id === +this.$route.params.id) {
+                    this.currentDevice = dev;
+                }
+            }, this);
+            setTimeout(function() {
+                this.initMap();
+            }.bind(this), 0);
         }
     },
     methods: {
+        setCenter() {
+            var dev = this.currentDevice;
+            this.map.setCenter([dev.gps.lng, dev.gps.lat]);
+        },
         setRegion() {
             if(this.trackLine) {
                 this.trackLine.setMap(null);
@@ -154,9 +179,9 @@ export default {
             if(!this.trackLine) {
                 this.trackLine = new AMap.Polyline({
                     path: lineArr,          //设置线覆盖物路径
-                    strokeColor: "#FEDA00", //线颜色
+                    strokeColor: "#f00", //线颜色#FEDA00
                     strokeOpacity: 1,       //线透明度
-                    strokeWeight: 5,        //线宽
+                    strokeWeight: 2,        //线宽
                     strokeStyle: "solid",   //线样式
                     strokeDasharray: [10, 5] //补充线样式
                 });
@@ -165,13 +190,27 @@ export default {
             this.trackLine.setPath(lineArr);
         },
         initMap() {
+            var dev = this.currentDevice;
+            var center = [dev.gps.lng, dev.gps.lat];
             var map = this.map = new AMap.Map(this.$els.map, {
-                zoom: 12,
-                center: [114.029808, 22.6284027]
+                zoom: 14,
+                center: center
             });
+            var marker = new AMap.Marker({
+                position: center,
+                icon: '/resources/images/map_fanwei.png'
+            });
+            marker.setMap(map);
             var satellite = this.satelliteLayer = new AMap.TileLayer.Satellite();
             satellite.setMap(this.map);
             satellite.hide();
+            map.plugin(["AMap.ToolBar"],function(){
+                //加载工具条
+                var tool = new AMap.ToolBar({
+                    // offset: new AMap.Pixel(100,100)
+                });
+                map.addControl(tool);   
+            });
         },
         clearLayers() {
             if(this.trackLine) {
@@ -180,12 +219,39 @@ export default {
             if(this.circle) {
                 this.circle.setMap(null);
             }
+        },
+        getHistoryGPS(devId, start, end) {
+            this.$http.get(this.$root.serverUrl + '/tracks/' + devId, {
+                start: start, 
+                end: end
+            }).then(function(res) {
+                if(res.data.status === -1) {
+                    this.$router.go('/login');
+                    return;
+                }
+                var path = [];
+                if(res.data.entrySet) {
+                    res.data.entrySet.forEach(function(point) {
+                        path.push([point.lng, point.lat]);
+                    });
+                }
+                this.drawPath(path);
+            }, this);
+        },
+        updateStatus(devices, gpsInfo) {
+            var devMap = {};
+            gpsInfo.forEach(function(gps) {
+                devMap[gps.devId] = gps;
+            });
+            devices.forEach(function(dev) {
+                dev.gps = devMap[dev.id];
+            });
         }
     },
     ready() {
-        console.log(this.$route.params.device);
+        console.log(this.currentDevice);
         setTimeout(function() {
-            this.initMap();
+            // this.initMap();
         }.bind(this), 0);
     }
 }
@@ -236,5 +302,17 @@ export default {
     main,
     .map {
         height: 100%;
+    }
+    main {
+        position: relative;
+    }
+    .locate {
+        position: absolute;
+        left: 20px;
+        bottom: 70px;
+        height: 18px;
+        width: 18px;
+        background: url(/resources/images/map_dingwei.png) no-repeat;
+        background-size: contain;
     }
 </style>
