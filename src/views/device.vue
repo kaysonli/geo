@@ -107,7 +107,7 @@ export default {
             this.$router.go('/warnings');
         },
         configure() {
-
+            this.$router.go('/settings');
         },
         setView(index) {
             this.active = index;
