@@ -48,23 +48,29 @@ export default {
             this.$http.post(this.$root.serverUrl + '/sms', {
                 mobile: this.mobile
             }).then(function(res) {
+                this.verification = res.data.entrySet[0].verification;
                 //{"actionName":"SMS","appId":"Exper","appSecret":"AFDFFDHKDDFJOFFDKLFKFKACMVKKFDFF","status":0,"timeStamp":183727132,"entrySet":[{"mobile":"13760202664","verification":"376274"}],"paramsSet":null}
-            });
+            }, this);
         },
         validate() {
-            this.error.code = this.$els.code.value === '';
-            this.error.unmatch = this.$els.password.value !== this.$els.password2.value;
-            this.error.password = /^[a-zA-Z0-9]{6,12}$/.test(this.$els.password.value) === false;
-            return !(this.error.code || this.error.userName || this.error.unmatch || this.password)
+            this.error.code = this.code !== this.verification;
+            this.error.unmatch = this.password !== this.password2;
+            this.error.password = /^[a-zA-Z0-9]{6,12}$/.test(this.password) === false;
+            return !(this.error.code || this.error.userName || this.error.unmatch || this.error.password)
         },
         submit() {
-            this.validate();
+            if(!this.validate()) {
+                return;
+            }
             this.$http.post(this.$root.serverUrl + '/users', {
-                username: this.userName,
+                username: this.mobile,
                 password: this.password
             }).then(function(res) {
+                if(res.data.status === 0) {
+                    this.$router.go('/login');
+                }
                 //{"actionName":"AddUserEx","appId":"Exper","appSecret":"AFDFFDHKDDFJOFFDKLFKFKACMVKKFDFF","status":0,"timeStamp":183727132,"entrySet":null,"paramsSet":null}
-            });
+            }, this);
         }
     }
 }

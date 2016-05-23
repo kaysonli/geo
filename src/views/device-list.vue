@@ -111,13 +111,15 @@ export default {
                     return;
                 }
                 var devices = [];
-                res.data.entrySet.forEach(function(dev) {
-                    devices.push(dev);
-                    dev.gps = {};
-                    dev.location = '';
-                    dev.power = 0;
-                    dev.removing = false;
-                });
+                if(res.data.entrySet) {
+                    res.data.entrySet.forEach(function(dev) {
+                        devices.push(dev);
+                        dev.gps = {};
+                        dev.location = '';
+                        dev.power = 0;
+                        dev.removing = false;
+                    });
+                }
                 this.devices = devices;
                 this.$root.devices = devices;
                 this.queryGPS();

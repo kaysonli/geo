@@ -56,12 +56,14 @@ router.get('/devices', isAuthenticated, function(req, res, next) {
 router.get('/gps', isAuthenticated, function(req, res, next) {
     var client = request.createClient(serverUrl);
     var paramsSet = [];
-    req.query.devIds.forEach(function(id) {
-        paramsSet.push({
-            name: 'devId',
-            value: id
+    if (req.query.devIds) {
+        req.query.devIds.forEach(function(id) {
+            paramsSet.push({
+                name: 'devId',
+                value: id
+            });
         });
-    });
+    }
     var data = {
         "actionName": "GPS",
         "appId": appId,
@@ -85,16 +87,19 @@ router.get('/warnings/:id', isAuthenticated, function(req, res, next) {
         "appId": appId,
         "appSecret": appSecret,
         "paramsSet": [{
-            "name": "userId",
-            "value": req.user.id
-        }, /*{
-            "name": "devId",
-            "value": req.params.id
-        }, */{
-            "compare": "%3E%3D",
-            "name": "dt_alarm",
-            "value": moment().add(-7, 'days').format('YYYY-MM-DD 00:00:00')
-        }],
+                "name": "userId",
+                "value": req.user.id
+            },
+            /*{
+                       "name": "devId",
+                       "value": req.params.id
+                   }, */
+            {
+                "compare": "%3E%3D",
+                "name": "dt_alarm",
+                "value": moment().add(-7, 'days').format('YYYY-MM-DD 00:00:00')
+            }
+        ],
         "status": 0,
         "timeStamp": 183727132
     };
@@ -205,7 +210,7 @@ router.post('/settings', isAuthenticated, function(req, res, next) {
 
 router.post('/sms', function(req, res, next) {
     var client = request.createClient(serverUrl);
-    var mobile = req.params.mobile;
+    var mobile = req.body.mobile;
     var data = {
         "actionName": "SMS",
         "appId": appId,
@@ -231,8 +236,8 @@ router.post('/sms', function(req, res, next) {
 //注册新用户
 router.post('/users', function(req, res, next) {
     var client = request.createClient(serverUrl);
-    var name = req.params.username;
-    var password = req.params.password;
+    var name = req.body.username;
+    var password = req.body.password;
     var data = {
         "actionName": "AddUserEx",
         "appId": appId,
