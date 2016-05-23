@@ -63,7 +63,7 @@ router.map({
     '/reset/new': {
         component: SetNew
     },
-    'warnings': {
+    'warnings/:id': {
         component: Warnings
     },
     'settings': {

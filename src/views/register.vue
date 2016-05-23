@@ -2,22 +2,22 @@
     <form class="full-page">
         <div class="text-field flex-box">
             <i class="fa fa-mobile"></i>
-            <input type="text" placeholder="请输入手机号码">
+            <input type="text" placeholder="请输入手机号码" v-model="mobile">
             <div class="btn fetch" @click="fetch">获取验证码</div>
         </div>
         <div class="text-field flex-box">
             <i class="fa fa-commenting"></i>
-            <input type="text" placeholder="请输入短信验证码" v-el:code>
+            <input type="text" placeholder="请输入短信验证码" v-model="code" v-el:code>
         </div>
         <div class="error" v-show="error.code">*验证码不正确</div>
         <div class="disclaimer">
             <div class="link">*注册即视为我已阅读并同意《软件注册使用协议》</div>
         </div>
         <div class="text-field password-field">
-            <input type="password" placeholder="设置密码(6-12位数字或字母)" v-el:password>
+            <input type="password" placeholder="设置密码(6-12位数字或字母)" v-model="password" v-el:password>
         </div>
         <div class="text-field">
-            <input type="password" placeholder="请重复确认密码" v-el:password2>
+            <input type="password" placeholder="请重复确认密码" v-model="password2" v-el:password2>
         </div>
         <div class="error" v-show="error.unmatch">*两次密码不一致</div>
         <div class="error" v-show="error.password">密码格式不正确</div>
@@ -31,6 +31,11 @@
 export default {
     data() {
         return {
+            mobile: '',
+            code: '',
+            userName: '',
+            password: '',
+            password2: '',
             error: {
                 code: false,
                 unmatch: false,
@@ -40,7 +45,11 @@ export default {
     },
     methods: {
         fetch() {
-
+            this.$http.post(this.$root.serverUrl + '/sms', {
+                mobile: this.mobile
+            }).then(function(res) {
+                //{"actionName":"SMS","appId":"Exper","appSecret":"AFDFFDHKDDFJOFFDKLFKFKACMVKKFDFF","status":0,"timeStamp":183727132,"entrySet":[{"mobile":"13760202664","verification":"376274"}],"paramsSet":null}
+            });
         },
         validate() {
             this.error.code = this.$els.code.value === '';
@@ -50,6 +59,12 @@ export default {
         },
         submit() {
             this.validate();
+            this.$http.post(this.$root.serverUrl + '/users', {
+                username: this.userName,
+                password: this.password
+            }).then(function(res) {
+                //{"actionName":"AddUserEx","appId":"Exper","appSecret":"AFDFFDHKDDFJOFFDKLFKFKACMVKKFDFF","status":0,"timeStamp":183727132,"entrySet":null,"paramsSet":null}
+            });
         }
     }
 }

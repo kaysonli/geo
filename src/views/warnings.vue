@@ -1,8 +1,8 @@
 <template>
   <div class="warning-page">
-    <div class="device-warning" v-for="group in dataSource.warnings">
-      <div class="device-name">{{ $key }}</div>
-      <div class="warning-info" v-for="warning in group">
+    <div class="device-warning">
+      <div class="device-name">{{ deviceName }}</div>
+      <div class="warning-info" v-for="warning in warnings">
         <div class="warning-icon warning-type-{{warning.status}}"></div>
         <div class="warning-detail">
           <div class="warning-name">{{warningType[warning.status]}}</div>
@@ -16,10 +16,8 @@
   export default {
     data() {
       return {
+        deviceName: '--',
         warningType: ['', 'SOS报警', '出围栏报警', '出围栏报警SOS报警'],
-        dataSource: {
-          warnings: {}
-        },
         warnings: [
           //   '245': [{
           //       "BLat": 22.6289082,
@@ -82,23 +80,71 @@
         ]
       }
     },
-    methods: {
-      queryWarnings() {
-        this.$http.get(this.$root.serverUrl + '/warnings').then(function(res) {
-            this.group(res.data.entrySet);
-        }, this);
-      },
-      group(items) {
-        var devices = {};
-        items.forEach(function(w) {
-          devices[w.devId] = devices[w.devId] || [];
-          devices[w.devId].push(w);
-        });
-        this.dataSource.warnings = devices;
+    route: {
+      data(transition) {
+        this.queryWarnings(this.$route.params.id);
+        var devices = this.devices || this.$root.devices;
+        if(!devices) {
+          this.queryDevices(function(devices) {
+            this.setDeviceName(devices);
+          }.bind(this));
+        } else {
+          this.setDeviceName(devices);
+        }
       }
     },
+    methods: {
+      queryWarnings(devId) {
+        this.$http.get(this.$root.serverUrl + '/warnings/' + devId).then(function(res) {
+            if(res.data.status === -1) {
+                this.$router.go('/login');
+                return;
+            }
+            this.group(res.data.entrySet, this.$route.params.id);
+        }, this);
+      },
+      group(items, devId) {
+        var devices = {};
+        var warnings = [];
+        items.forEach(function(w) {
+          if(+w.devId === +devId) {
+            warnings.push(w);
+          }
+        }, this);
+        this.warnings = warnings;
+      },
+      setDeviceName(devices) {
+        for(var i = 0; i < devices.length; i++) {
+          if(devices[i].id === +this.$route.params.id) {
+            this.deviceName = devices[i].name;
+            break;
+          }
+        }
+      },
+      queryDevices(callback) {
+        this.$http.get(this.$root.serverUrl + '/devices').then(function(res) {
+            console.log(res);
+            if(res.data.status === -1) {
+                this.$router.go('/login');
+                return;
+            }
+            var devices = [];
+            res.data.entrySet.forEach(function(dev) {
+                devices.push(dev);
+                dev.gps = {};
+                dev.location = '';
+                dev.power = 0;
+                dev.removing = false;
+            });
+            this.devices = devices;
+            if(callback) {
+              callback(devices);
+            }
+          }, this);
+        },
+    },
     ready() {
-      this.queryWarnings();
+      
     }
   }
 </script>

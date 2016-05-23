@@ -5,14 +5,87 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var serveIndex = require('serve-index');
+var request = require('request-json');
 var cors = require('cors');
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
+
+var config = require('./config.js');
+
+var serverUrl = config.serverUrl;
+var appId = config.appId;
+var appSecret = config.appSecret;
+
+function getUser(username, callback) {
+  var client = request.createClient(serverUrl);
+    var data = {
+        "actionName": "QueryUser",
+        "appId": appId,
+        "appSecret": appSecret,
+        "paramsSet": [{
+            name: 'name',
+            value: username
+        }, {
+            name: 'page',
+            value: 0
+        }],
+        "status": 0,
+        "timeStamp": 183727132
+    };
+    client.post('WebAPI.ashx/?=', data,
+        function(error, response, body) {
+            if(error) {
+                callback(null);
+            } else {
+              callback(body.entrySet[0]);
+            }
+        }
+    );
+}
+
+function verifyUserLogin(username, password, callback) {
+    var client = request.createClient(serverUrl);
+    var data = {
+        "actionName": "QueryUser",
+        "appId": appId,
+        "appSecret": appSecret,
+        "paramsSet": [{
+            name: 'name',
+            value: username
+        }, {
+            name: 'page',
+            value: 0
+        }],
+        "status": 0,
+        "timeStamp": 183727132
+    };
+    client.post('WebAPI.ashx/?=', data,
+        function(error, response, body) {
+            if(error) {
+                callback(false);
+            } else {
+              var isValid = body.entrySet && body.entrySet[0].pwd === password;
+              callback({
+                user: isValid ? body.entrySet[0] : null,
+                message: isValid ? '' : '用户名或密码错误'
+              });
+            }
+        }
+    );
+}
 
 passport.use(new LocalStrategy({
         passReqToCallback: true
     },
     function(req, username, password, done) {
+      verifyUserLogin(username, password, function(result) {
+        if(!result.user) {
+          return done(null, false, {
+            message: result.message
+          });
+        }
+        return done(null, result.user);
+      });
         // User.findOne({ username: username }, function(err, user) {
         //     if (err) {
         //         return done(err); }
@@ -25,16 +98,16 @@ passport.use(new LocalStrategy({
         //     return done(null, user);
         // });
         // req.login();
-        return done(null, { username: username});
+        // return done(null, { username: username});
     }
 ));
 passport.serializeUser(function(user, done) {
-    done(null, user.username);
+    done(null, user.name);
 });
 
-passport.deserializeUser(function(id, done) {
-    done(null, {
-        username: id
+passport.deserializeUser(function(name, done) {
+    getUser(name, function(user) {
+      done(null, user);
     });
 });
 

@@ -128,7 +128,7 @@ export default {
             this.$router.go(this.$route.path + '/track');
         },
         viewAlarms() {
-            this.$router.go('/warnings');
+            this.$router.go('/warnings/' + this.$route.params.id);
         },
         configure() {
             this.$router.go('/settings');

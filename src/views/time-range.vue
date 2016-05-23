@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      year: 2015,
+      year: 2016,
       month: 5,
       date: 21,
       hourFrom: 8,
@@ -135,6 +135,10 @@ export default {
     }
   },
   ready() {
+    var today = new Date();
+    this.year = today.getFullYear();
+    this.month = today.getMonth() + 1;
+    this.date = today.getDate();
     this.$refs.year.value = this.year;
     this.$refs.month.value = this.month;
     this.$refs.date.value = this.date;

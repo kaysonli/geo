@@ -10,11 +10,17 @@
         <div class="btn" @click="login">登录</div>
         <div class="btn btn-revert" @click="register">注册</div>
         <div class="forgot center" @click="forget">忘记密码</div>
+        <div class="error center" v-show="incorrect">用户名或密码错误</div>
     </div>
 </template>
 
 <script>
 export default {
+    data() {
+        return {
+            incorrect: false
+        }
+    },
     methods: {
         clear() {
             this.$els.username.value = '';
@@ -29,6 +35,11 @@ export default {
                 if(res.data.status === 1) {
                     this.$router.go('/devices');
                 }
+            }, function(res) {
+                if(res.status === 401) {
+                    this.incorrect = true;
+                }
+                console.log(res);
             });
         },
         register() {
@@ -71,5 +82,9 @@ export default {
     }
     .register {
         color: brown;
+    }
+    .error {
+        color: red;
+        margin-top: 10px;
     }
 </style>
