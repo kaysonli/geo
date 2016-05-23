@@ -50,6 +50,19 @@ export default {
     route: {
         data(transition) {
             console.log(this.trackLine)
+             setTimeout(function() {
+                var devices = this.devices || this.$root.devices;
+                if(devices) {
+                    var current = this.getCurrentDevice(devices);
+                    if(!current) {
+                        this.$router.go('/devices');
+                        return;
+                    }
+                    this.initMap(current);
+                } else {
+                    this.queryDevices();
+                }
+            }.bind(this), 0);
             // transition.next();
         }
     },
@@ -98,25 +111,11 @@ export default {
             this.getHistoryGPS(this.$route.params.id, start, end);
             var lineArr = [ [ 114.050751, 22.666425 ], [ 114.066887, 22.645197 ], [ 114.05899, 22.611923 ], [ 114.024315, 22.588151 ], [ 113.992729, 22.599879 ], [ 113.992729, 22.633156 ], [ 114.050751, 22.666425 ] ];
             // this.drawPath(lineArr);
-        },
-        'devices-ready': function(devices) {
-            this.devices = devices;
-        },
-        'gps-ready': function(data) {
-            this.updateStatus(this.devices, data);
-            this.devices.forEach(function(dev) {
-                if(dev.id === +this.$route.params.id) {
-                    this.currentDevice = dev;
-                }
-            }, this);
-            setTimeout(function() {
-                this.initMap();
-            }.bind(this), 0);
         }
     },
     methods: {
         setCenter() {
-            var dev = this.currentDevice;
+            var dev = this.getCurrentDevice(this.devices || this.$root.devices);
             this.map.setCenter([dev.gps.lng, dev.gps.lat]);
         },
         setRegion() {
@@ -189,8 +188,7 @@ export default {
             this.trackLine.setMap(this.map);
             this.trackLine.setPath(lineArr);
         },
-        initMap() {
-            var dev = this.currentDevice;
+        initMap(dev) {
             var center = [dev.gps.lng, dev.gps.lat];
             var map = this.map = new AMap.Map(this.$els.map, {
                 zoom: 14,
@@ -238,21 +236,67 @@ export default {
                 this.drawPath(path);
             }, this);
         },
-        updateStatus(devices, gpsInfo) {
+        queryDevices() {
+            this.$http.get(this.$root.serverUrl + '/devices').then(function(res) {
+                console.log(res);
+                if(res.data.status === -1) {
+                    this.$router.go('/login');
+                    return;
+                }
+                var devices = [];
+                res.data.entrySet.forEach(function(dev) {
+                    devices.push(dev);
+                    dev.gps = {};
+                    dev.location = '';
+                    dev.power = 0;
+                    dev.removing = false;
+                });
+                this.devices = devices;
+                this.queryGPS();
+            }, this);
+        },
+        queryGPS() {
+            var devIds = [];
+            this.devices.forEach(function(dev) {
+                devIds.push(dev.id);
+            });
+            
+            this.$http.get(this.$root.serverUrl + '/gps', {
+                devIds: devIds
+            }).then(function(res) {
+                this.updateStatus(res.data.entrySet);
+                setTimeout(function() {
+                    var current = this.getCurrentDevice(this.devices);
+                    if(!current) {
+                        this.$router.go('/devices');
+                    } else {
+                        this.initMap(current);
+                    }
+                }.bind(this), 0);
+            }, this);
+        },
+        updateStatus(gpsInfo) {
             var devMap = {};
             gpsInfo.forEach(function(gps) {
                 devMap[gps.devId] = gps;
             });
-            devices.forEach(function(dev) {
+            this.devices.forEach(function(dev) {
                 dev.gps = devMap[dev.id];
             });
+        },
+        getCurrentDevice(devices) {
+            var current = null;
+            for(var i = 0; i < devices.length; i++) {
+                if(devices[i].id === +this.$route.params.id) {
+                    current = devices[i];
+                    break;
+                }
+            }
+            return current;
         }
     },
     ready() {
-        console.log(this.currentDevice);
-        setTimeout(function() {
-            // this.initMap();
-        }.bind(this), 0);
+        console.log('device ready');
     }
 }
 </script>

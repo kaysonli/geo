@@ -20,42 +20,10 @@ export default {
     }
   },
   methods: {
-    queryDevices() {
-      this.$http.get(this.$root.serverUrl + '/devices').then(function(res) {
-        console.log(res);
-        if(res.data.status === -1) {
-            this.$router.go('/login');
-            return;
-        }
-        var devices = [];
-        res.data.entrySet.forEach(function(dev) {
-            devices.push(dev);
-            dev.gps = {};
-            dev.location = '';
-            dev.power = 0;
-            dev.removing = false;
-        });
-        this.$broadcast('devices-ready', devices);
-        this.queryGPS(devices);
-      }, this);
-    },
-    queryGPS(devices) {
-      var devIds = [];
-      devices.forEach(function(dev) {
-          devIds.push(dev.id);
-      });
-      this.$http.get(this.$root.serverUrl + '/gps', {
-          devIds: devIds
-      }).then(function(res) {
-        this.$broadcast('gps-ready',res.data.entrySet);
-          // setTimeout(function() {
-          //     this.initMaps();
-          // }.bind(this), 0);
-      }, this);
-    }
+    
   },
   ready() {
-    this.queryDevices();
+    console.log('App ready');
   }
 }
 </script>

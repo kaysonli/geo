@@ -68,19 +68,14 @@ export default {
     },
     route: {
         data(transition) {
-            
+            this.queryDevices();
+            // setInterval(function() {
+            //     this.queryGPS();
+            // }.bind(this), 10000);
         }
     },
     events: {
-        'devices-ready': function(devices) {
-            this.devices = devices;
-        },
-        'gps-ready': function(data) {
-            this.updateStatus(data);
-            setTimeout(function() {
-                this.initMaps();
-            }.bind(this), 0);
-        }
+        
     },
     methods: {
         addDevice() {
@@ -124,7 +119,7 @@ export default {
                     dev.removing = false;
                 });
                 this.devices = devices;
-                window.devices = devices;
+                this.$root.devices = devices;
                 this.queryGPS();
             }, this);
         },
@@ -191,10 +186,6 @@ export default {
     },
     ready() {
         document.title = '我的宠觅';
-        // this.queryDevices();
-        // setInterval(function() {
-        //     this.queryGPS();
-        // }.bind(this), 10000);
     }
 }
 </script>
