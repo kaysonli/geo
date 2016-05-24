@@ -13,7 +13,7 @@
                 <div class="fa fa-warning"></div>
                 <div class="tool-text">报警</div>
             </div>
-            <div class="tool" :class="{active: tab === 'gps'}">
+            <div class="tool" :class="{active: tab === 'gps'}" v-touch:tap="realtimeGPS">
                 <div class="fa fa-map-marker"></div>
                 <div class="tool-text">实时定位</div>
             </div>
@@ -58,11 +58,7 @@ export default {
                         this.$router.go('/devices');
                         return;
                     }
-                    if(this.map) {
-                        this.map.setCenter([current.gps.lng, current.gps.lat]);
-                    } else {
-                        this.initMap(current);
-                    }
+                    this.initMap(current);
                 } else {
                     this.queryDevices();
                 }
@@ -72,6 +68,7 @@ export default {
     },
     data() {
         return {
+            tab: '',
             active: 1,
             rangeTab: 0,
             editing: false,
@@ -117,24 +114,41 @@ export default {
             // this.drawPath(lineArr);
         }
     },
+    watch: {
+        'tab': function(val, oldVal) {
+            if(!val) {
+                clearInterval(this.gpsTimer);
+            }
+        }
+    },
     methods: {
         setCenter() {
             var dev = this.getCurrentDevice(this.devices || this.$root.devices);
             this.map.setCenter([dev.gps.lng, dev.gps.lat]);
         },
         setRegion() {
+            this.tab = '';
             if(this.trackLine) {
                 this.trackLine.setMap(null);
             }
             this.$router.go(this.$route.path + '/range');
         },
         viewPath() {
+            this.tab = '';
             this.$router.go(this.$route.path + '/track');
         },
         viewAlarms() {
+            this.tab = '';
             this.$router.go('/warnings/' + this.$route.params.id);
         },
+        realtimeGPS() {
+            this.tab = 'gps';
+            this.gpsTimer = setInterval(function() {
+                this.queryGPS();
+            }.bind(this), 10000);
+        },
         configure() {
+            this.tab = '';
             this.$router.go('/settings');
         },
         setView(index) {
@@ -194,6 +208,10 @@ export default {
         },
         initMap(dev) {
             var center = [dev.gps.lng, dev.gps.lat];
+            if(this.map) {
+                this.map.setCenter(center);
+                return;
+            }
             var map = this.map = new AMap.Map(this.$els.map, {
                 zoom: 14,
                 center: center
@@ -260,10 +278,7 @@ export default {
             }, this);
         },
         queryGPS() {
-            var devIds = [];
-            this.devices.forEach(function(dev) {
-                devIds.push(dev.id);
-            });
+            var devIds = [this.$route.params.id];
             
             this.$http.get(this.$root.serverUrl + '/gps', {
                 devIds: devIds
@@ -322,11 +337,14 @@ export default {
         flex: 1;
         text-align: center;
         height: 100%;
-        margin-top: 5px;
+        padding-top: 5px;
     }
     .tool .fa {
         color: #FEDA00;
         font-size: 18px;
+    }
+    .tool.active .fa {
+        color: #fff;
     }
     .tool-text {
         font-size: 14px;
