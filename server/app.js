@@ -37,11 +37,12 @@ function getUser(username, callback) {
             if(error) {
                 callback(null);
             } else {
-              callback(body.entrySet[0]);
+              callback(body.entrySet ? body.entrySet[0] : null);
             }
         }
     );
 }
+
 
 function verifyUserLogin(username, password, callback) {
     var client = request.createClient(serverUrl);

@@ -10,6 +10,39 @@ var serverUrl = config.serverUrl;
 var appId = config.appId;
 var appSecret = config.appSecret;
 
+function getUser(username, callback) {
+  var client = request.createClient(serverUrl);
+    var data = {
+        "actionName": "QueryUser",
+        "appId": appId,
+        "appSecret": appSecret,
+        "paramsSet": [{
+            name: 'name',
+            value: username
+        }, {
+            name: 'page',
+            value: 0
+        }],
+        "status": 0,
+        "timeStamp": 183727132
+    };
+    client.post('WebAPI.ashx/?=', data,
+        function(error, response, body) {
+            if(error) {
+                callback(null);
+            } else {
+              callback(body.entrySet ? body.entrySet[0] : null);
+            }
+        }
+    );
+}
+
+router.get('/checkuser/:name', function(req, res, next) {
+    getUser(req.params.name, function(user) {
+        res.send(!!user);
+    });
+});
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Express' });

@@ -27,7 +27,14 @@ export default {
             this.$router.go('/home');
         },
         scan() {
-            this.$router.go('/input');
+            wx.scanQRCode({
+              needResult: 1,
+              desc: 'scanQRCode desc',
+              success: function (res) {
+                alert(JSON.stringify(res));
+              }
+            });
+            // this.$router.go('/input');
         }
     }
 }

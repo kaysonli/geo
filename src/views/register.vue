@@ -5,6 +5,8 @@
             <input type="text" placeholder="请输入手机号码" v-model="mobile">
             <div class="btn fetch" @click="fetch">获取验证码</div>
         </div>
+        <div class="error" v-show="error.mobile">*手机号不正确</div>
+        <div class="error" v-show="error.existed">*手机号已注册</div>
         <div class="text-field flex-box">
             <i class="fa fa-commenting"></i>
             <input type="text" placeholder="请输入短信验证码" v-model="code" v-el:code>
@@ -37,6 +39,8 @@ export default {
             password: '',
             password2: '',
             error: {
+                mobile: false,
+                existed: false,
                 code: false,
                 unmatch: false,
                 password: false
@@ -44,13 +48,27 @@ export default {
         }
     },
     methods: {
-        fetch() {
-            this.$http.post(this.$root.serverUrl + '/sms', {
-                mobile: this.mobile
-            }).then(function(res) {
-                this.verification = res.data.entrySet[0].verification;
-                //{"actionName":"SMS","appId":"Exper","appSecret":"AFDFFDHKDDFJOFFDKLFKFKACMVKKFDFF","status":0,"timeStamp":183727132,"entrySet":[{"mobile":"13760202664","verification":"376274"}],"paramsSet":null}
+        checkUser(callback) {
+            this.$http.get(this.$root.serverUrl + '/checkuser/' + this.mobile).then(function(res) {
+                callback(res.data);
             }, this);
+        },
+        fetch() {
+            this.error.mobile = /^1[0-9]{10}$/.test(this.mobile) === false;
+            if(this.error.mobile) {
+                return;
+            }
+            this.checkUser(function(exist) {
+                this.error.existed = exist;
+                if(!exist) {
+                    this.$http.post(this.$root.serverUrl + '/sms', {
+                        mobile: this.mobile
+                    }).then(function(res) {
+                        this.verification = res.data.entrySet[0].verification;
+                        //{"actionName":"SMS","appId":"Exper","appSecret":"AFDFFDHKDDFJOFFDKLFKFKACMVKKFDFF","status":0,"timeStamp":183727132,"entrySet":[{"mobile":"13760202664","verification":"376274"}],"paramsSet":null}
+                    }, this);
+                }
+            }.bind(this))
         },
         validate() {
             this.error.code = this.code !== this.verification;

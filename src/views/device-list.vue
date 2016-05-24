@@ -140,6 +140,9 @@ export default {
             }, this);
         },
         updateStatus(gpsInfo) {
+            if(!gpsInfo) {
+                return;
+            }
             var devMap = {};
             gpsInfo.forEach(function(gps) {
                 devMap[gps.devId] = gps;
