@@ -2,14 +2,14 @@
     <form class="full-page">
         <div class="text-field flex-box">
             <i class="fa fa-mobile"></i>
-            <input type="text" v-model="mobile" placeholder="请输入手机号码">
+            <input type="text" v-model="mobile" placeholder="请输入手机号码" class="icon-mobile icon">
             <div class="btn fetch" @click="fetch">{{ btnText }}</div>
         </div>
         <div class="error" v-show="error.notexisted">*用户不存在</div>
         <div class="error" v-show="error.mobile">*手机号不正确</div>
         <div class="text-field flex-box">
             <i class="fa fa-commenting"></i>
-            <input type="text" v-model="code" placeholder="请输入短信验证码" v-el:code>
+            <input type="text" v-model="code" placeholder="请输入短信验证码" class="icon icon-code" v-el:code>
         </div>
         <div class="error" v-show="error.code">*验证码不正确</div>
         <div class="page-bottom">
@@ -83,6 +83,7 @@ export default {
             }.bind(this))
         },
         validate() {
+            this.error.code = this.code !== this.verification;
             return this.code === this.verification;
         },
         next() {
@@ -128,5 +129,6 @@ export default {
     .fa {
         color: #DEDEDE;
         margin-left: 16px;
+        display: none;
     }
 </style>

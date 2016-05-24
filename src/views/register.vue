@@ -1,15 +1,13 @@
 <template>
     <form class="full-page">
         <div class="text-field flex-box">
-            <i class="fa fa-mobile"></i>
-            <input type="text" placeholder="请输入手机号码" v-model="mobile">
+            <input type="text" placeholder="请输入手机号码" v-model="mobile" class="icon icon-mobile">
             <div class="btn fetch" @click="fetch">获取验证码</div>
         </div>
         <div class="error" v-show="error.mobile">*手机号不正确</div>
         <div class="error" v-show="error.existed">*手机号已注册</div>
         <div class="text-field flex-box">
-            <i class="fa fa-commenting"></i>
-            <input type="text" placeholder="请输入短信验证码" v-model="code" v-el:code>
+            <input type="text" placeholder="请输入短信验证码" v-model="code" v-el:code class="icon icon-code">
         </div>
         <div class="error" v-show="error.code">*验证码不正确</div>
         <div class="disclaimer">

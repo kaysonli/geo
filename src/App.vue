@@ -154,6 +154,16 @@ body {
     border: none;
     -webkit-appearance: none;
 }
+.text-field input.icon {
+    padding-left: 30px;
+    margin-left: 12px;
+}
+.icon-mobile {
+    background: url(/resources/images/phone_ico.jpg) no-repeat 0;
+}
+.icon-code {
+    background: url(/resources/images/duanxin_ico.jpg) no-repeat 0;
+}
 
 .page-bottom {
   flex: 1;

@@ -13,7 +13,7 @@
                 <div class="fa fa-warning"></div>
                 <div class="tool-text">报警</div>
             </div>
-            <div class="tool">
+            <div class="tool" :class="{active: tab === 'gps'}">
                 <div class="fa fa-map-marker"></div>
                 <div class="tool-text">实时定位</div>
             </div>
@@ -58,7 +58,11 @@ export default {
                         this.$router.go('/devices');
                         return;
                     }
-                    this.initMap(current);
+                    if(this.map) {
+                        this.map.setCenter([current.gps.lng, current.gps.lat]);
+                    } else {
+                        this.initMap(current);
+                    }
                 } else {
                     this.queryDevices();
                 }
