@@ -4,7 +4,9 @@
         <div class="item-list">
             <div class="item" v-for="dev in devices" 
                 v-bind:class="{'removing': dev.removing}"
-                v-touch:tap="viewDeviceInfo(dev, $event)" v-touch:swipe="onSwipe(dev, $event)">
+                v-touch:tap="viewDeviceInfo(dev, $event)" 
+                v-touch-options:swipe="{ direction: 'horizontal', threshold: 5}"
+                v-touch:swipe.stop="onSwipe(dev, $event)">
                 <div class="map" id="map-{{dev.id}}"></div>
                 <div class="item-info">
                     <header>
@@ -208,6 +210,7 @@ export default {
         transition: left 0.2s;
         position: relative;
         left: 0;
+        overflow: hidden;
     }
 
     .item .map {
@@ -251,6 +254,7 @@ export default {
     
     .item.removing {
         left: -120px;
+        overflow: visible;
     }
     .btn-remove {
         position: absolute;

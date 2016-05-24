@@ -60,7 +60,8 @@ router.map({
     '/reset': {
         component: Reset
     },
-    '/reset/new': {
+    '/reset/:mobile': {
+        auth: false,
         component: SetNew
     },
     'warnings/:id': {

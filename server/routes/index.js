@@ -300,5 +300,52 @@ router.post('/users', function(req, res, next) {
     );
 });
 
+router.post('/users/resetpwd', function(req, res, next) {
+    var username = req.body.mobile;
+    var password = req.body.password;
+    getUser(username, function(user) {
+        if(user) {
+            var client = request.createClient(serverUrl);
+            var name = req.body.username;
+            var password = req.body.password;
+            var data = {
+                "actionName": "ModifyUser",
+                "appId": appId,
+                "appSecret": appSecret,
+                "entrySet": [{
+                    "addr": "",
+                    "devId": "",
+                    "mail": "",
+                    "mobilePhone": "",
+                    "name": username,
+                    "note": "",
+                    "phone": username,
+                    "pwd": password,
+                    "id": user.id,
+                    "parentId": 0,
+                    "sex": 0,
+                    "userTypeId": 2
+                }],
+                "status": 0,
+                "timeStamp": 183727132
+            };
+            client.post('WebAPI.ashx/?=', data,
+                function(error, response, body) {
+                    console.log(error);
+                    res.send({
+                        status: error ? -1 : 0,
+                        user: body.entrySet
+                    });
+                }
+            );
+        } else {
+            res.send({
+                status: -1
+            });
+        }
+    });
+});
+
+
 
 module.exports = router;

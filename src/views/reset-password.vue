@@ -2,12 +2,14 @@
     <form class="full-page">
         <div class="text-field flex-box">
             <i class="fa fa-mobile"></i>
-            <input type="text" placeholder="请输入手机号码">
-            <div class="btn fetch" @click="fetch">获取验证码</div>
+            <input type="text" v-model="mobile" placeholder="请输入手机号码">
+            <div class="btn fetch" @click="fetch">{{ btnText }}</div>
         </div>
+        <div class="error" v-show="error.notexisted">*用户不存在</div>
+        <div class="error" v-show="error.mobile">*手机号不正确</div>
         <div class="text-field flex-box">
             <i class="fa fa-commenting"></i>
-            <input type="text" placeholder="请输入短信验证码" v-el:code>
+            <input type="text" v-model="code" placeholder="请输入短信验证码" v-el:code>
         </div>
         <div class="error" v-show="error.code">*验证码不正确</div>
         <div class="page-bottom">
@@ -18,24 +20,78 @@
 
 <script>
 export default {
+    route: {
+        data(transition) {
+            transition.next();
+        },
+        deactivate() {
+            this.$root.verified = false;
+        }
+    },
     data() {
         return {
+            mobile: '',
+            code: '',
             error: {
+                notexisted: false,
+                mobile: false,
                 code: false
-            }
+            },
+            btnText: '获取验证码',
+            btnDisabled: false
         }
     },
     methods: {
+        checkUser(callback) {
+            this.$http.get(this.$root.serverUrl + '/checkuser/' + this.mobile).then(function(res) {
+                callback(res.data);
+            }, this);
+        },
+        countDown() {
+            this.btnDisabled = true;
+            var time = 60;
+            this.btnText = time + 's';
+            var timer = setInterval(function() {
+                --time;
+                this.btnText = time + 's';
+                if(time <= 0) {
+                    clearInterval(timer);
+                    this.btnText = '获取验证码';
+                    this.btnDisabled = false;
+                }
+            }.bind(this), 1000);
+        },
         fetch() {
-
+            if(this.btnDisabled) {
+                return;
+            }
+            this.error.mobile = /^1[0-9]{10}$/.test(this.mobile) === false;
+            if(this.error.mobile) {
+                return;
+            }
+            this.countDown();
+            this.checkUser(function(exist) {
+                this.error.notexisted = !exist;
+                if(exist) {
+                    this.$http.post(this.$root.serverUrl + '/sms', {
+                        mobile: this.mobile
+                    }).then(function(res) {
+                        this.verification = res.data.entrySet && res.data.entrySet[0].verification;
+                        //{"actionName":"SMS","appId":"Exper","appSecret":"AFDFFDHKDDFJOFFDKLFKFKACMVKKFDFF","status":0,"timeStamp":183727132,"entrySet":[{"mobile":"13760202664","verification":"376274"}],"paramsSet":null}
+                    }, this);
+                }
+            }.bind(this))
         },
         validate() {
-            this.error.code = this.$els.code.value === '';
-            return !this.error.code
+            return this.code === this.verification;
         },
         next() {
-            this.validate();
-            this.$router.go('/reset/new');
+            if(this.validate()) {
+                this.$root.verified = true;
+                this.$router.go({
+                    path: '/reset/' + this.mobile
+                });
+            }
         }
     },
     ready() {
