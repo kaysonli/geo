@@ -16,7 +16,7 @@ import TimeRange from './views/time-range.vue'
 import Warnings from './views/warnings.vue'
 import Settings from './views/settings.vue'
 
-import global from './global.js'
+import store from './vuex/store'
 
 
 Vue.use(require('vue-resource'))
@@ -79,7 +79,7 @@ router.redirect({
 
 Vue.http.interceptors.push({
     request: function (request) {
-        global.state.loading = true;
+        store.dispatch('SET_LOADING', true);
         return request;
     },
     response: function (response) {
@@ -87,7 +87,7 @@ Vue.http.interceptors.push({
         if(response.data.status === -1) {
             router.go('/login');
         }
-        global.state.loading = false;
+        store.dispatch('SET_LOADING', false);
         return response;
     }
 });

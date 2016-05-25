@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-view></router-view>
-    <div class="loading-mask" v-show="state.loading"></div>
+    <div class="loading-mask" v-show="loading"></div>
   </div>
 </template>
 
@@ -12,7 +12,7 @@ import Cell from 'vux/components/cell'
 import DateTime from 'vux/components/datetime'
 import global from './global'
 import store from './vuex/store'
-
+import { loadDevices, updateGPS } from './vuex/actions'
 export default {
   components: {
     Hello, Group, Cell, DateTime
@@ -20,14 +20,71 @@ export default {
   store: store,
   data() {
     return {
-      state: global.state,
       serverUrl: ''
     }
   },
+  vuex: {
+    getters: {
+      loading: state => state.loading,
+      devices: state => state.devices
+    },
+    actions: {
+      loadDevices,
+      updateGPS
+    }
+  },
   methods: {
-    
+    loadData() {
+      this.$http.get(this.$root.serverUrl + '/devices').then(function(res) {
+          console.log(res);
+          var devices = [];
+          if(res.data.entrySet) {
+              res.data.entrySet.forEach(function(dev) {
+                  devices.push(dev);
+                  dev.gps = {};
+                  dev.location = '';
+                  dev.power = 0;
+                  dev.removing = false;
+              });
+          }
+          this.loadDevices(devices);
+          this.queryGPS();
+      }, this);
+    },
+    queryGPS() {
+        var devIds = [];
+        this.devices.forEach(function(dev) {
+            devIds.push(dev.id);
+        });
+        this.$http.get(this.$root.serverUrl + '/gps', {
+            devIds: devIds
+        }).then(function(res) {
+          this.updateGPS(res.data.entrySet);
+          this.queryLoaction();
+        }, this);
+    },
+    queryLoaction() {
+      this.devices.forEach(function(dev) {
+        AMap.service('AMap.Geocoder', function() {//回调函数
+            //实例化Geocoder
+            var geocoder = new AMap.Geocoder();
+            //TODO: 使用geocoder 对象完成相关功能
+            var lnglatXY = [dev.gps.lng, dev.gps.lat];//地图上所标点的坐标
+            geocoder.getAddress(lnglatXY, function(status, result) {
+                if (status === 'complete' && result.info === 'OK') {
+                    var address = result.regeocode.addressComponent;
+                    var full = address.province + address.district + address.township + address.street + address.streetNumber;
+                    dev.location = full;
+                } else {
+                   //获取地址失败
+                }
+            }); 
+        });
+      }, this)
+    }
   },
   ready() {
+    this.loadData();
     console.log('App ready');
       /*
        * 注意：

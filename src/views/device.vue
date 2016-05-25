@@ -38,7 +38,6 @@
 
 <script>
 import utils from './../utils.js';
-import global from '../global.js';
 export default {
     props: {
         devId: {
@@ -48,23 +47,16 @@ export default {
             type: Array
         }
     },
+    vuex: {
+        getters: {
+            devices: state => state.devices,
+            gpsReady: state => state.gpsReady,
+            activeDevice: state => state.activeDevice
+        }
+    },
     route: {
         data(transition) {
-            console.log(this.trackLine)
-             setTimeout(function() {
-                var devices = this.devices || this.$root.devices;
-                if(devices) {
-                    var current = this.getCurrentDevice(devices);
-                    if(!current) {
-                        this.$router.go('/devices');
-                        return;
-                    }
-                    this.initMap(current);
-                } else {
-                    this.queryDevices();
-                }
-            }.bind(this), 0);
-            // transition.next();
+            transition.next();
         }
     },
     data() {
@@ -117,16 +109,19 @@ export default {
     },
     watch: {
         'tab': function(val, oldVal) {
-            console.log(global);
-            window.global = global;
             if(!val) {
                 clearInterval(this.gpsTimer);
+            }
+        },
+        'gpsReady': function(val) {
+            if(val) {
+                this.initMap(this.activeDevice);
             }
         }
     },
     methods: {
         setCenter() {
-            var dev = this.getCurrentDevice(this.devices || this.$root.devices);
+            var dev = this.activeDevice;
             this.map.setCenter([dev.gps.lng, dev.gps.lat]);
         },
         setRegion() {
@@ -260,61 +255,6 @@ export default {
                 }
                 this.drawPath(path);
             }, this);
-        },
-        queryDevices() {
-            this.$http.get(this.$root.serverUrl + '/devices').then(function(res) {
-                console.log(res);
-                if(res.data.status === -1) {
-                    this.$router.go('/login');
-                    return;
-                }
-                var devices = [];
-                res.data.entrySet.forEach(function(dev) {
-                    devices.push(dev);
-                    dev.gps = {};
-                    dev.location = '';
-                    dev.power = 0;
-                    dev.removing = false;
-                });
-                this.devices = devices;
-                this.queryGPS();
-            }, this);
-        },
-        queryGPS() {
-            var devIds = [this.$route.params.id];
-            
-            this.$http.get(this.$root.serverUrl + '/gps', {
-                devIds: devIds
-            }).then(function(res) {
-                this.updateStatus(res.data.entrySet);
-                setTimeout(function() {
-                    var current = this.getCurrentDevice(this.devices);
-                    if(!current) {
-                        this.$router.go('/devices');
-                    } else {
-                        this.initMap(current);
-                    }
-                }.bind(this), 0);
-            }, this);
-        },
-        updateStatus(gpsInfo) {
-            var devMap = {};
-            gpsInfo.forEach(function(gps) {
-                devMap[gps.devId] = gps;
-            });
-            this.devices.forEach(function(dev) {
-                dev.gps = devMap[dev.id];
-            });
-        },
-        getCurrentDevice(devices) {
-            var current = null;
-            for(var i = 0; i < devices.length; i++) {
-                if(devices[i].id === +this.$route.params.id) {
-                    current = devices[i];
-                    break;
-                }
-            }
-            return current;
         }
     },
     ready() {
