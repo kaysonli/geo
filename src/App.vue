@@ -11,11 +11,13 @@ import Group from 'vux/components/group'
 import Cell from 'vux/components/cell'
 import DateTime from 'vux/components/datetime'
 import global from './global'
+import store from './vuex/store'
 
 export default {
   components: {
     Hello, Group, Cell, DateTime
   },
+  store: store,
   data() {
     return {
       state: global.state,

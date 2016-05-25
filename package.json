@@ -18,7 +18,8 @@
     ]
   },
   "dependencies": {
-    "vue": "^1.0.0"
+    "vue": "^1.0.0",
+    "vuex": "^0.6.3"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",
