@@ -16,6 +16,8 @@ import TimeRange from './views/time-range.vue'
 import Warnings from './views/warnings.vue'
 import Settings from './views/settings.vue'
 
+import global from './global.js'
+
 
 Vue.use(require('vue-resource'))
 Vue.use(VueRouter);
@@ -73,6 +75,21 @@ router.map({
 });
 router.redirect({
     '*': '/devices',
+});
+
+Vue.http.interceptors.push({
+    request: function (request) {
+        global.state.loading = true;
+        return request;
+    },
+    response: function (response) {
+        console.log(response);
+        if(response.data.status === -1) {
+            router.go('/login');
+        }
+        global.state.loading = false;
+        return response;
+    }
 });
 
 router.start(App, '#app');

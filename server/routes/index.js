@@ -9,6 +9,8 @@ var moment = require('moment');
 var serverUrl = config.serverUrl;
 var appId = config.appId;
 var appSecret = config.appSecret;
+var SESSION_EXPIRED = -1;
+var ERROR = -2;
 
 function getUser(username, callback) {
   var client = request.createClient(serverUrl);
@@ -50,7 +52,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/login', passport.authenticate('local'), function(req, res, next) {
     res.send({
-        status: 1
+        status: 0
     });
 });
 
@@ -59,7 +61,7 @@ var isAuthenticated = function(req, res, next) {
         return next();
     } else {
         res.send({
-            status: -1,
+            status: SESSION_EXPIRED,
             message: '用户未登录'
         });
     }
@@ -333,14 +335,14 @@ router.post('/users/resetpwd', function(req, res, next) {
                 function(error, response, body) {
                     console.log(error);
                     res.send({
-                        status: error ? -1 : 0,
+                        status: error ? ERROR : 0,
                         user: body.entrySet
                     });
                 }
             );
         } else {
             res.send({
-                status: -1
+                status: ERROR
             });
         }
     });

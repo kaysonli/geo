@@ -1,6 +1,7 @@
 <template>
   <div>
     <router-view></router-view>
+    <div class="loading-mask" v-show="state.loading"></div>
   </div>
 </template>
 
@@ -9,6 +10,7 @@ import Hello from './components/Hello.vue'
 import Group from 'vux/components/group'
 import Cell from 'vux/components/cell'
 import DateTime from 'vux/components/datetime'
+import global from './global'
 
 export default {
   components: {
@@ -16,6 +18,7 @@ export default {
   },
   data() {
     return {
+      state: global.state,
       serverUrl: ''
     }
   },
@@ -184,5 +187,15 @@ body {
 }
   .amap-touch-toolbar .amap-zoomcontrol {
       bottom: 140px;
+  }
+  .loading-mask {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10000;
+    opacity: 0.4;
+    background: #ececec url(/resources/images/loading.gif) no-repeat center;
   }
 </style>

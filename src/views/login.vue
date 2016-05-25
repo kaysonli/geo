@@ -32,7 +32,7 @@ export default {
                 password: this.$els.password.value
             }).then(function(res) {
                 console.log(res);
-                if(res.data.status === 1) {
+                if(res.data.status === 0) {
                     this.$router.go('/devices');
                 }
             }, function(res) {

@@ -38,6 +38,7 @@
 
 <script>
 import utils from './../utils.js';
+import global from '../global.js';
 export default {
     props: {
         devId: {
@@ -116,6 +117,8 @@ export default {
     },
     watch: {
         'tab': function(val, oldVal) {
+            console.log(global);
+            window.global = global;
             if(!val) {
                 clearInterval(this.gpsTimer);
             }

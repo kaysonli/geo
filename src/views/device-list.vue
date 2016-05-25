@@ -108,10 +108,10 @@ export default {
         queryDevices() {
             this.$http.get(this.$root.serverUrl + '/devices').then(function(res) {
                 console.log(res);
-                if(res.data.status === -1) {
-                    this.$router.go('/login');
-                    return;
-                }
+                // if(res.data.status === -1) {
+                //     this.$router.go('/login');
+                //     return;
+                // }
                 var devices = [];
                 if(res.data.entrySet) {
                     res.data.entrySet.forEach(function(dev) {
