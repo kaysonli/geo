@@ -11,7 +11,26 @@
         </div>
         <div class="shezhi">
             <div class="fl">时区设置</div>
-            <div class="fr">east, 8h, 0m</div>
+            <span class="time-zone">{{direction}},{{hour}}h,{{minute}}m</span>
+            <!-- <div class="fr">east, 8h, 0m</div> -->
+            <div class="fr icon-down" v-bind:class="{'icon-down-top': !!timeZoneExpanded}" v-touch:tap="toggleTimeZone"></div>
+            <div class="icon-down-content" v-show="timeZoneExpanded">
+              <div class="clear"></div>
+                <div class="time-picker">
+                  <select :items="directions" v-model="direction">
+                    <option value="{{item.value}}" v-for="item in directions">{{item.text}}</option>
+                  </select>
+                  <select :items="hours" v-model="hour">
+                    <option value="{{item.value}}" v-for="item in hours">{{item.text}}</option>
+                  </select>
+                  <select :items="minutes" v-model="minute">
+                    <option value="{{item.value}}" v-for="item in minutes">{{item.text}}</option>
+                  </select>
+                  <div class="fr">
+                    <input type="submit" value="确定">
+                  </div>
+                </div>
+            </div>
         </div>
         <div class="shezhi">
             <div class="fl">定位模式</div>
@@ -79,7 +98,11 @@
     </div>
 </template>
 <script>
+import Scroller from './../components/scroller.vue';
   export default {
+    components: {
+      Scroller
+    },
     vuex: {
       getters: {
         activeDevice: state => state.activeDevice
@@ -90,8 +113,43 @@
         console.log(this.activeDevice.settings);
       }
     },
+    computed: {
+      directions() {
+        return [{
+          value: 'east',
+          text: '东'
+        }, {
+          value: 'west',
+          text: '西'
+        }]
+      },
+      hours() {
+        var items = [];
+        for(var i = 0; i<=12;i++) {
+          items.push({
+            value: i,
+            text: i + ' h'
+          });
+        }
+        return items;
+      },
+      minutes() {
+        var items = [];
+        for(var i = 0;i<=12;i++) {
+          items.push({
+            value: i * 5,
+            text: i * 5 + ' m'
+          });
+        }
+        return items;
+      }
+    },
     data() {
       return {
+        direction: 'east',
+        hour: 8,
+        minute: 0,
+        timeZoneExpanded: false,
         geoExpanded: false,
         alarmExpanded: false,
         checked: {
@@ -126,6 +184,9 @@
       },
       toggleAlarm() {
         this.alarmExpanded = !this.alarmExpanded;
+      },
+      toggleTimeZone() {
+        this.timeZoneExpanded = !this.timeZoneExpanded;
       }
     },
     watch: {
@@ -284,5 +345,16 @@
 }
 .clear {
   clear: both;
+}
+.time-picker {
+  display: flex;
+  align-items: center;
+}
+.time-picker select {
+  flex: 1;
+  height: 30px;
+}
+.time-zone {
+  margin-left: 30px;
 }
 </style>
