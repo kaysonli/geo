@@ -7,6 +7,7 @@ const state = {
   logined: false,
   loading: false,
   devices: [],
+  gpsInfo: [],
   activeDevice: {},
   gpsReady: false
 }
@@ -31,6 +32,7 @@ const mutations = {
   },
 
   UPDATE_GPS(state, gpsOfDevices) {
+    state.gpsInfo = gpsOfDevices;
     var devMap = {};
     if(gpsOfDevices) {
       gpsOfDevices.forEach(function(gps) {

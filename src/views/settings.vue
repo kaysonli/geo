@@ -68,11 +68,11 @@
                 <input type="range" v-model="frequency" id="trackBar2" min="1" max="10" step="1" value="1" />
             </div>
         </div>
-        <div class="shezhi">
+        <div class="shezhi" v-touch:tap="setDevicePassword">
             <div class="fl">修改设备密码</div>
             <div class="fr icon-right"></div>
         </div>
-        <div class="shezhi">
+        <div class="shezhi" v-touch:tap="viewDeviceInfo">
             <div class="fl">设备信息</div>
             <div class="fr icon-right"></div>
         </div>
@@ -80,6 +80,16 @@
 </template>
 <script>
   export default {
+    vuex: {
+      getters: {
+        activeDevice: state => state.activeDevice
+      }
+    },
+    route: {
+      data() {
+        console.log(this.activeDevice.settings);
+      }
+    },
     data() {
       return {
         geoExpanded: false,
@@ -91,10 +101,26 @@
           gps_station: false
         },
         frequency: 1,
-        waken: 1
+        waken: 1,
+        settings: {}
       }
     },
     methods: {
+      // querySettings(devId) {
+      //   this.$http.get(this.$root.serverUrl + '/additionals/' + devId, {
+
+      //   }).then(function(res) {
+      //     this.settings = res.data.entrySet[0];
+      //     console.log(this.settings);
+      //     this.parseSettings(res.data.entrySet[0])
+      //   }, this);
+      // },
+      setDevicePassword() {
+        this.$router.go('/settings/setpwd');
+      },
+      viewDeviceInfo() {
+        this.$router.go('/settings/device', true);
+      },
       toggleGeoMode() {
         this.geoExpanded = !this.geoExpanded;
       },

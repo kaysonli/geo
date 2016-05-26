@@ -15,6 +15,8 @@ import RangeBar from './components/range-bar.vue'
 import TimeRange from './views/time-range.vue'
 import Warnings from './views/warnings.vue'
 import Settings from './views/settings.vue'
+import DeviceInfo from './views/device-info.vue'
+import SetDevicePwd from './views/device-password.vue'
 
 import store from './vuex/store'
 
@@ -71,6 +73,12 @@ router.map({
     },
     'settings': {
         component: Settings
+    },
+    'settings/device': {
+        component: DeviceInfo
+    },
+    'settings/setpwd': {
+        component: SetDevicePwd
     }
 });
 router.redirect({

@@ -51,6 +51,7 @@ export default {
               res.data.entrySet.forEach(function(dev) {
                   devices.push(dev);
                   dev.gps = {};
+                  dev.settings = {};
                   dev.location = '';
                   dev.power = 0;
                   dev.removing = false;
@@ -59,6 +60,7 @@ export default {
           this.outdateGPS();
           this.loadDevices(devices);
           this.queryGPS();
+          this.querySettings();
       }, this);
     },
     queryGPS() {
@@ -69,9 +71,58 @@ export default {
         this.$http.get(this.$root.serverUrl + '/gps', {
             devIds: devIds
         }).then(function(res) {
-          this.updateGPS(res.data.entrySet);
-          this.queryLocation();
+          if(res.data.status === 0) {
+            this.updateGPS(res.data.entrySet);
+            this.queryLocation();
+          }
         }, this);
+    },
+    querySettings() {
+      this.devices.forEach(function(dev) {
+        this.$http.get(this.$root.serverUrl + '/additionals/' + dev.id, {
+
+        }).then(function(res) {
+          var ds099Params = res.data.entrySet[0].ds099Params.split(',');
+          // this.parseSettings(ds099Params)
+          dev.power = ds099Params[17];
+          dev.settings = this.parseSettings(ds099Params);
+          dev.settings.imei = dev.sign;
+          dev.settings.sim = dev.sim;
+        }, this);
+      }, this);
+    },
+    parseSettings(ds099Params) {
+        // var ds099Params = settings.ds099Params.split(',');// "0000,A,,,,120.25.76.30,6050,E0800,0,0,60,1,0,5,0,0,22,98,0002,1,200,22.657952,114.043100,160523,173815,DS_008_P320_V20_008_20160518&"
+        //["0000", "V", "", "", "", "120.25.76.30", "6050", "E0800", "0", "0", "20", "1", "0", "5", "0", "0", "16", "87", "0002", "3", "5", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "160521", "213347", "DS_008_P320_V20_008_20160518&"]
+        var geoMode = ds099Params[1]; //A: GPS, V: LBS,
+        var timeZone = ds099Params[7];
+        var frequency = ds099Params[10]
+        var waken = ds099Params[13];
+        var power = ds099Params[17];
+        var version = ds099Params[ds099Params.length - 1].replace('&', '');
+        return {
+          geoMode: geoMode,
+          timeZone: timeZone,
+          frequency: frequency,
+          waken: waken,
+          power: power,
+          version: version,
+          password: ds099Params[0]
+        };
+        //状态标志:
+        /*2字节16进制字符（0-9，A-F）
+        第一字节：
+        Bit7：备用
+        Bit6：备用
+        Bit5：=1 表示开启APP报警
+        Bit4：=1 表示开启电话报警
+        Bit3：=1表示开启短信报警
+        Bit2：=1表示开启低电量报警
+        Bit1：=1表示打开 LED
+        Bit0：=1表示开启监听
+        第二字节：备用*/
+        var statusByte = ds099Params[18];
+        
     },
     queryLocation() {
       this.devices.forEach(function(dev) {

@@ -46,7 +46,7 @@ export default {
     vuex: {
         getters: {
             devices: state => state.devices,
-            gpsReady: state => state.gpsReady,
+            gpsInfo: state => state.gpsInfo,
             logined: state => state.logined
         },
         actions: {
@@ -60,7 +60,7 @@ export default {
         }
     },
     watch: {
-        'gpsReady': function(val) {
+        'gpsInfo': function(val) {
             if(val) {
                 this.initMaps();
             }
@@ -73,7 +73,7 @@ export default {
     },
     route: {
         data(transition) {
-            if(this.gpsReady) {
+            if(this.gpsInfo.length > 0) {
                 setTimeout(function() {
                     this.initMaps();
                 }.bind(this), 0);
@@ -193,6 +193,23 @@ export default {
     .location .fa,
     .time {
         color: gray;
+    }
+
+    .fa-battery-0 {
+        color: red;
+    }
+
+    .fa-battery-1 {
+        color: brown;
+    }
+
+    .fa-battery-2 {
+        color: orange;
+    }
+
+    .fa-battery-3,
+    .fa-battery-4 {
+        color: green;
     }
     
     .item.removing {

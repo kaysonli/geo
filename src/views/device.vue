@@ -50,13 +50,13 @@ export default {
     vuex: {
         getters: {
             devices: state => state.devices,
-            gpsReady: state => state.gpsReady,
+            gpsInfo: state => state.gpsInfo,
             activeDevice: state => state.activeDevice
         }
     },
     route: {
         data(transition) {
-            if(this.gpsReady) {
+            if(this.gpsInfo.length > 0) {
                 this.initMap(this.activeDevice)
             }
             transition.next();
@@ -116,8 +116,8 @@ export default {
                 clearInterval(this.gpsTimer);
             }
         },
-        'gpsReady': function(val) {
-            if(val) {
+        'gpsInfo': function(val) {
+            if(val.length > 0) {
                 this.initMap(this.activeDevice);
             }
         }
@@ -145,8 +145,8 @@ export default {
         realtimeGPS() {
             this.tab = 'gps';
             this.gpsTimer = setInterval(function() {
-                this.queryGPS();
-            }.bind(this), 10000);
+                this.$root.queryGPS();
+            }.bind(this), 3000);
         },
         configure() {
             this.tab = '';
