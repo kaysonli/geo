@@ -56,6 +56,9 @@ export default {
     },
     route: {
         data(transition) {
+            if(this.gpsReady) {
+                this.initMap(this.activeDevice)
+            }
             transition.next();
         }
     },

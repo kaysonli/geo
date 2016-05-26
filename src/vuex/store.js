@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const state = {
+  logined: false,
   loading: false,
   devices: [],
   activeDevice: {},
@@ -31,9 +32,11 @@ const mutations = {
 
   UPDATE_GPS(state, gpsOfDevices) {
     var devMap = {};
-    gpsOfDevices.forEach(function(gps) {
-      devMap[gps.devId] = gps;
-    });
+    if(gpsOfDevices) {
+      gpsOfDevices.forEach(function(gps) {
+        devMap[gps.devId] = gps;
+      });
+    }
     state.devices.forEach(function(dev) {
       dev.gps = devMap[dev.id];
     });
@@ -42,6 +45,17 @@ const mutations = {
 
   SET_LOADING(state, loading) {
     state.loading = loading
+  },
+
+  SET_LOGIN(state, logined) {
+    state.logined = logined;
+    if(!logined) {
+      state.gpsReady = false;
+    }
+  },
+
+  OUTDATE_GPS(state) {
+    state.gpsReady = false;
   }
 }
 

@@ -88,6 +88,26 @@ router.get('/devices', isAuthenticated, function(req, res, next) {
     );
 });
 
+router.get('/additionals/:id', isAuthenticated, function(req, res, next) {
+    var client = request.createClient(serverUrl);
+    var data = {
+        "actionName": "QueryDevAdditionInfo",
+        "appId": appId,
+        "appSecret": appSecret,
+        "paramsSet": [{
+             "name": "devId", "value": req.params.id }
+        ],
+        "status": 0,
+        "timeStamp": 183727132
+    };
+    client.post('WebAPI.ashx/?=', data,
+        function(error, response, body) {
+            console.log(error);
+            res.send(body);
+        }
+    );
+});
+
 router.get('/gps', isAuthenticated, function(req, res, next) {
     var client = request.createClient(serverUrl);
     var paramsSet = [];

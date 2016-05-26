@@ -15,10 +15,16 @@
 </template>
 
 <script>
+import {setLogined} from '../vuex/actions'
 export default {
     data() {
         return {
             incorrect: false
+        }
+    },
+    vuex: {
+        actions: {
+            setLogined
         }
     },
     methods: {
@@ -33,6 +39,7 @@ export default {
             }).then(function(res) {
                 console.log(res);
                 if(res.data.status === 0) {
+                    this.setLogined(true);
                     this.$router.go('/devices');
                 }
             }, function(res) {

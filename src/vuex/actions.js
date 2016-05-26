@@ -33,3 +33,15 @@ export const setLoading = ({
 }, loading) => {
     dispatch('SET_LOADING', loading)
 }
+
+export const setLogined = ({
+  dispatch
+}, logined) => {
+  dispatch('SET_LOGIN', logined)
+}
+
+export const outdateGPS = ({
+  dispatch
+}) => {
+  dispatch('OUTDATE_GPS')
+}

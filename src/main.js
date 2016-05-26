@@ -85,6 +85,7 @@ Vue.http.interceptors.push({
     response: function (response) {
         console.log(response);
         if(response.data.status === -1) {
+            store.dispatch('SET_LOGINED', false);
             router.go('/login');
         }
         store.dispatch('SET_LOADING', false);

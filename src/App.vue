@@ -12,7 +12,7 @@ import Cell from 'vux/components/cell'
 import DateTime from 'vux/components/datetime'
 import global from './global'
 import store from './vuex/store'
-import { loadDevices, updateGPS } from './vuex/actions'
+import { loadDevices, updateGPS, outdateGPS } from './vuex/actions'
 export default {
   components: {
     Hello, Group, Cell, DateTime
@@ -25,12 +25,21 @@ export default {
   },
   vuex: {
     getters: {
+      logined: state => state.logined,
       loading: state => state.loading,
       devices: state => state.devices
     },
     actions: {
       loadDevices,
-      updateGPS
+      updateGPS,
+      outdateGPS
+    }
+  },
+  watch: {
+    'logined': function(val) {
+      if(val) {
+        this.loadData();
+      }
     }
   },
   methods: {
@@ -47,6 +56,7 @@ export default {
                   dev.removing = false;
               });
           }
+          this.outdateGPS();
           this.loadDevices(devices);
           this.queryGPS();
       }, this);
@@ -60,10 +70,10 @@ export default {
             devIds: devIds
         }).then(function(res) {
           this.updateGPS(res.data.entrySet);
-          this.queryLoaction();
+          this.queryLocation();
         }, this);
     },
-    queryLoaction() {
+    queryLocation() {
       this.devices.forEach(function(dev) {
         AMap.service('AMap.Geocoder', function() {//回调函数
             //实例化Geocoder

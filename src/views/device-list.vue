@@ -46,7 +46,8 @@ export default {
     vuex: {
         getters: {
             devices: state => state.devices,
-            gpsReady: state => state.gpsReady
+            gpsReady: state => state.gpsReady,
+            logined: state => state.logined
         },
         actions: {
             deleteDevice,
@@ -60,6 +61,11 @@ export default {
     },
     watch: {
         'gpsReady': function(val) {
+            if(val) {
+                this.initMaps();
+            }
+        },
+        'logined': function(val) {
             if(val) {
                 this.initMaps();
             }
