@@ -6,6 +6,21 @@ var passport = require('passport');
 var config = require('../config.js');
 var moment = require('moment');
 
+//国测局坐标(火星坐标,比如高德地图在用),百度坐标,wgs84坐标(谷歌国外以及绝大部分国外在线地图使用的坐标)
+var coordtransform=require('coordtransform');
+//百度经纬度坐标转国测局坐标
+var bd09togcj02=coordtransform.bd09togcj02(116.404, 39.915);
+//国测局坐标转百度经纬度坐标
+var gcj02tobd09=coordtransform.gcj02tobd09(116.404, 39.915);
+//wgs84转国测局坐标
+var wgs84togcj02=coordtransform.wgs84togcj02(116.404, 39.915);
+//国测局坐标转wgs84坐标
+var gcj02towgs84=coordtransform.gcj02towgs84(116.404, 39.915);
+console.log(bd09togcj02);
+console.log(gcj02tobd09);
+console.log(wgs84togcj02);
+console.log(gcj02towgs84);
+
 var serverUrl = config.serverUrl;
 var appId = config.appId;
 var appSecret = config.appSecret;
@@ -13,7 +28,7 @@ var SESSION_EXPIRED = -1;
 var ERROR = -2;
 
 function getUser(username, callback) {
-  var client = request.createClient(serverUrl);
+    var client = request.createClient(serverUrl);
     var data = {
         "actionName": "QueryUser",
         "appId": appId,
@@ -30,10 +45,10 @@ function getUser(username, callback) {
     };
     client.post('WebAPI.ashx/?=', data,
         function(error, response, body) {
-            if(error) {
+            if (error) {
                 callback(null);
             } else {
-              callback(body.entrySet ? body.entrySet[0] : null);
+                callback(body.entrySet ? body.entrySet[0] : null);
             }
         }
     );
@@ -95,8 +110,9 @@ router.get('/additionals/:id', isAuthenticated, function(req, res, next) {
         "appId": appId,
         "appSecret": appSecret,
         "paramsSet": [{
-             "name": "devId", "value": req.params.id }
-        ],
+            "name": "devId",
+            "value": req.params.id
+        }],
         "status": 0,
         "timeStamp": 183727132
     };
@@ -196,10 +212,8 @@ router.get('/tracks/:id', isAuthenticated, function(req, res, next) {
     );
 });
 
-router.post('/settings/:id/region', isAuthenticated, function(req, res, next) {
+function deviceSetting(cmd, devId, devPwd, params, res) {
     var client = request.createClient(serverUrl);
-    var devId = req.params.devId;
-    var option = req.params.option;
     var data = {
         "actionName": "DevCMD",
         "appId": appId,
@@ -209,10 +223,10 @@ router.post('/settings/:id/region', isAuthenticated, function(req, res, next) {
             "value": devId
         }, {
             "name": "cmd",
-            "value": "311"
+            "value": cmd
         }, {
             "name": "param",
-            "value": "" //value=2000,W,114.030324,22.628117,G,114.035407,22.625361,0000
+            "value": params + ',' + devPwd //value=2000,W,114.030324,22.628117,G,114.035407,22.625361,0000
         }],
         "status": 0,
         "timeStamp": 183727132
@@ -220,9 +234,104 @@ router.post('/settings/:id/region', isAuthenticated, function(req, res, next) {
     client.post('WebAPI.ashx/?=', data,
         function(error, response, body) {
             console.log(error);
-            res.send(body);
+            queryCmdResult(body.paramsSet[0].value, function(result) {
+                res.send(result);
+            });
         }
     );
+}
+
+function queryCmdResult(index, callback) {
+    var client = request.createClient(serverUrl);
+    var data = {
+        "actionName": "QueryCmdResult",
+        "appId": appId,
+        "appSecret": appSecret,
+        "paramsSet": [{
+            "name": "index",
+            "value": index
+        }],
+        "status": 0,
+        "timeStamp": 183727132
+    };
+    client.post('WebAPI.ashx/?=', data,
+        function(error, response, body) {
+            console.log(error);
+            callback(body);
+        }
+    );
+}
+
+function convertCoordinate(points) {
+    var wgs84 = 'W,';
+    var gcj02 = 'G,';
+    for(var i = 0;i<points.length;i++) {
+        var x = points[i][0],
+            y = points[i][1];
+        gcj02 += x + ',' + y + ','
+        var p = coordtransform.gcj02towgs84(x, y);
+        wgs84 += p[0] + ',' + p[1] + ','
+    }
+    return wgs84 + gcj02;
+}
+
+router.post('/settings/region', isAuthenticated, function(req, res, next) {
+    var devId = req.body.devId;
+    var devPwd = req.body.devPwd;
+    var points = req.body.points;
+    var params = points.length + ',' + convertCoordinate(points) + devPwd;
+    var cmd = '311';
+    deviceSetting(cmd, devId, devPwd, params, res);
+});
+
+router.post('/settings/circle', isAuthenticated, function(req, res, next) {
+    var devId = req.body.devId;
+    var devPwd = req.body.devPwd;
+    var coord = req.body.coord;
+    var radius = req.body.radius;
+    var params = radius + ',' + convertCoordinate([coord]) + devPwd;
+    var cmd = '750';
+    deviceSetting(cmd, devId, devPwd, params, res);
+});
+
+router.post('/settings/admin', function(req, res, next) {
+    var devId = req.body.devId;
+    var devPwd = req.body.devPwd;
+    var params = req.body.params;
+    var cmd = '710';
+    deviceSetting(cmd, devId, devPwd, params, res);
+});
+
+router.post('/settings/heartbeat', function(req, res, next) {
+    var devId = req.body.devId;
+    var params = req.body.params;
+    var devPwd = req.body.devPwd;
+    var cmd = '309';
+    deviceSetting(cmd, devId, devPwd, params, res);
+});
+
+router.post('/settings/changepwd', function(req, res, next) {
+    var devId = req.body.devId;
+    var params = req.body.params;
+    var devPwd = req.body.devPwd;
+    var cmd = '770';
+    deviceSetting(cmd, devId, devPwd, params, res);
+});
+
+router.post('/settings/timezone', function(req, res, next) {
+    var devId = req.body.devId;
+    var devPwd = req.body.devPwd;
+    var params = req.body.params;
+    var cmd = '313';
+    deviceSetting(cmd, devId, devPwd, params, res);
+});
+
+router.post('/settings/led', function(req, res, next) {
+    var devId = req.body.devId;
+    var devPwd = req.body.devPwd;
+    var params = req.body.params;
+    var cmd = '303';
+    deviceSetting(cmd, devId, devPwd, params, res);
 });
 
 router.post('/settings', isAuthenticated, function(req, res, next) {
@@ -326,7 +435,7 @@ router.post('/users/resetpwd', function(req, res, next) {
     var username = req.body.mobile;
     var password = req.body.password;
     getUser(username, function(user) {
-        if(user) {
+        if (user) {
             var client = request.createClient(serverUrl);
             var name = req.body.username;
             var password = req.body.password;

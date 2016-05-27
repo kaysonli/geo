@@ -1,10 +1,17 @@
 <template>
     <div class="container f0_bg">
         <div class="shezhi">
+            <div class="fl">管理员号码</div>
+            <div class="fr">
+                <input type="text" class="admin" v-model="admin" placeholder="管理员">
+                <input type="submit" value="确定" v-touch:tap="setAdmin">
+            </div>
+        </div>
+        <div class="shezhi">
             <div class="fl">LED</div>
             <div class="fr">
                 <div class="switch">
-                    <input type="checkbox" v-model="checked.led" v-el:led>
+                    <input type="checkbox" v-model="checked.led" @change="toggleLED">
                     <label><i></i></label>
                 </div>
             </div>
@@ -27,12 +34,12 @@
                     <option value="{{item.value}}" v-for="item in minutes">{{item.text}}</option>
                   </select>
                   <div class="fr">
-                    <input type="submit" value="确定">
+                    <input type="submit" value="确定" v-touch:tap="setTimeZone">
                   </div>
                 </div>
             </div>
         </div>
-        <div class="shezhi">
+        <!-- <div class="shezhi">
             <div class="fl">定位模式</div>
             <div class="fr icon-down" v-bind:class="{'icon-down-top': !!geoExpanded}" v-touch:tap="toggleGeoMode"></div>
             <div class="icon-down-content" v-show="geoExpanded">
@@ -61,12 +68,12 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="shezhi">
             <div class="fl">报警设置</div>
             <div class="fr icon-down" v-bind:class="{'icon-down-top': !!alarmExpanded}" v-touch:tap="toggleAlarm"></div>
         </div>
-        <div class="shezhi" v-show="alarmExpanded">
+        <div class="shezhi" v-show="false">
             <div class="fl">震动唤醒</div>
             <div class="fr">
                 <input type="text" v-model="waken" placeholder="1" id="trackBar_1">
@@ -80,11 +87,11 @@
         <div class="shezhi" v-show="alarmExpanded">
             <div class="fl">上传间隔</div>
             <div class="fr">
-                <input type="text" v-model="frequency" placeholder="1" id="trackBar_2">
-                <input type="submit" value="确定">
+                <input type="text" v-model="heartbeat" placeholder="1" id="trackBar_2">
+                <input type="submit" value="确定" v-touch:tap="setHeartbeat">
             </div>
             <div>
-                <input type="range" v-model="frequency" id="trackBar2" min="1" max="10" step="1" value="1" />
+                <input type="range" v-model="heartbeat" id="trackBar2" min="10" max="9999" step="1" value="1" />
             </div>
         </div>
         <div class="shezhi" v-touch:tap="setDevicePassword">
@@ -111,6 +118,7 @@ import Scroller from './../components/scroller.vue';
     route: {
       data() {
         console.log(this.activeDevice.settings);
+        this.initSettings();
       }
     },
     computed: {
@@ -146,6 +154,7 @@ import Scroller from './../components/scroller.vue';
     },
     data() {
       return {
+        admin: '',
         direction: 'east',
         hour: 8,
         minute: 0,
@@ -153,12 +162,12 @@ import Scroller from './../components/scroller.vue';
         geoExpanded: false,
         alarmExpanded: false,
         checked: {
-          led: true,
+          led: false,
           gps: true,
           station: false,
           gps_station: false
         },
-        frequency: 1,
+        heartbeat: 60,
         waken: 1,
         settings: {}
       }
@@ -173,6 +182,61 @@ import Scroller from './../components/scroller.vue';
       //     this.parseSettings(res.data.entrySet[0])
       //   }, this);
       // },
+      initSettings() {
+        this.admin = this.activeDevice.settings.admin;
+        var timeZone = this.activeDevice.settings.timeZone;
+        this.direction = timeZone[0] === 'E' ? 'east' : 'west';
+        this.hour = parseInt(timeZone.slice(1, 3), 16);
+        this.minute = parseInt(timeZone.slice(3, 5), 16);
+
+        this.heartbeat = this.activeDevice.settings.heartbeat;
+        this.checked.led = !!this.activeDevice.settings.LED;
+      },
+      setAdmin() {
+        this.$http.post(this.$root.serverUrl + '/settings/admin', {
+          devId: this.activeDevice.id,
+          devPwd: this.activeDevice.settings.password,
+          params: this.admin
+        }).then(function(res) {
+          
+        }, this);
+      },
+      setHeartbeat() {
+        this.$http.post(this.$root.serverUrl + '/settings/heartbeat', {
+          devId: this.activeDevice.id,
+          devPwd: this.activeDevice.settings.password,
+          params: this.heartbeat
+        }).then(function(res) {
+          if(res.data.status !== 1) {
+            this.heartbeat = this.activeDevice.settings.heartbeat;
+          } else {
+            this.activeDevice.settings.heartbeat = this.heartbeat;
+          }
+        }, this);
+      },
+      setTimeZone() {
+        var d = this.direction === 'east' ? '0' : '1';
+        var h = (+this.hour).toString(16);
+        var m = (+this.minute).toString(16);
+        var timeZone = d + ',' + h + ',' + m;
+        this.$http.post(this.$root.serverUrl + '/settings/timezone', {
+          devId: this.activeDevice.id,
+          devPwd: this.activeDevice.password,
+          params: timeZone
+        }).then(function(res) {
+          
+        }, this);
+      },
+      toggleLED() {
+        var status = this.checked.led;
+        this.$http.post(this.$root.serverUrl + '/settings/led', {
+          devId: this.activeDevice.id,
+          devPwd: this.activeDevice.settings.password,
+          params: status ? '1' : '0'
+        }).then(function(res) {
+          
+        }, this);
+      },
       setDevicePassword() {
         this.$router.go('/settings/setpwd');
       },
@@ -356,5 +420,9 @@ import Scroller from './../components/scroller.vue';
 }
 .time-zone {
   margin-left: 30px;
+}
+
+.shezhi .fr input[type="text"].admin {
+  width: 120px;
 }
 </style>

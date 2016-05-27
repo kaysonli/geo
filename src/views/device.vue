@@ -90,7 +90,9 @@ export default {
                     points.push([node.getLng(), node.getLat()]);
                 });
             }
+            console.log(points);
             this.mouseTool.close(true);
+            this.postRegionSettings(points.slice(0, points.length - 1));
         },
         'draw-cancel': function() {
             if(this.mouseTool) {
@@ -132,6 +134,7 @@ export default {
             if(this.trackLine) {
                 this.trackLine.setMap(null);
             }
+            this.loadFencePath(this.activeDevice);
             this.$router.go(this.$route.path + '/range');
         },
         viewPath() {
@@ -163,10 +166,10 @@ export default {
         goBack() {
             this.$router.go('/add');
         },
-        drawCircle(radius) {
+        drawCircle(radius, center) {
             if(!this.circle) {
                 this.circle = new AMap.Circle({
-                    center: this.map.getCenter(),
+                    center: center || this.map.getCenter(),
                     radius: radius, //半径
                     strokeColor: "#ececec", //线颜色
                     strokeOpacity: 1, //线透明度
@@ -233,6 +236,20 @@ export default {
                 map.addControl(tool);   
             });
         },
+        loadFencePath(dev) {
+            var fence = dev.settings.fence;
+            var type = fence.type;
+            if(type === 1) {
+                this.drawCircle(fence.radius, fence.center);
+            } else if(type === 3) {
+                var points = [];
+                for(var i = 0; i < fence.points.length; i+=2) {
+                    points.push([fence.points[i], fence.points[i + 1]]);
+                }
+                points.push([fence.points[0], fence.points[1]]);
+                this.drawPath(points);
+            }
+        },
         clearLayers() {
             if(this.trackLine) {
                 this.trackLine.setMap(null);
@@ -240,6 +257,15 @@ export default {
             if(this.circle) {
                 this.circle.setMap(null);
             }
+        },
+        postRegionSettings(points) {
+            this.$http.post(this.$root.serverUrl + '/settings/region', {
+                devId: this.activeDevice.id,
+                devPwd: this.activeDevice.settings.password,
+                points: points
+            }).then(function(res) {
+
+            }, this);
         },
         getHistoryGPS(devId, start, end) {
             this.$http.get(this.$root.serverUrl + '/tracks/' + devId, {

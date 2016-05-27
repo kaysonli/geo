@@ -51,17 +51,18 @@ export default {
         },
         submit() {
             if(this.validate()) {
-                this.$http.post(this.$root.serverUrl + '/devices/resetpwd', {
-                    devId: this.$route.params.mobile,
-                    password: this.password
+                this.$http.post(this.$root.serverUrl + '/settings/changepwd', {
+                    devId: this.activeDevice.id,
+                    devPwd: this.activeDevice.password,
+                    params: this.password
                 }).then(function(res) {
-                    this.$router.go('/login');
+                    history.go(-1);
                 }, this);
             }
         }
     },
     ready() {
-        document.title = '找回密码';
+        document.title = '修改设备密码';
     }
 }
 </script>

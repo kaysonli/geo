@@ -83,27 +83,45 @@ export default {
 
         }).then(function(res) {
           var ds099Params = res.data.entrySet[0].ds099Params.split(',');
+          var ds099Admin = res.data.entrySet[0].ds099Admin.split(',');
           // this.parseSettings(ds099Params)
           dev.power = ds099Params[17];
           dev.settings = this.parseSettings(ds099Params);
           dev.settings.imei = dev.sign;
           dev.settings.sim = dev.sim;
+          dev.settings.admin = ds099Admin[1];
         }, this);
       }, this);
     },
     parseSettings(ds099Params) {
         // var ds099Params = settings.ds099Params.split(',');// "0000,A,,,,120.25.76.30,6050,E0800,0,0,60,1,0,5,0,0,22,98,0002,1,200,22.657952,114.043100,160523,173815,DS_008_P320_V20_008_20160518&"
         //["0000", "V", "", "", "", "120.25.76.30", "6050", "E0800", "0", "0", "20", "1", "0", "5", "0", "0", "16", "87", "0002", "3", "5", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "0.000000", "160521", "213347", "DS_008_P320_V20_008_20160518&"]
-        var geoMode = ds099Params[1]; //A: GPS, V: LBS,
+        var gps = ds099Params[1]; //A: GPS, V: LBS,
         var timeZone = ds099Params[7];
-        var frequency = ds099Params[10]
+        var LBS = ds099Params[8];
+        var heartbeat = ds099Params[10]
         var waken = ds099Params[13];
         var power = ds099Params[17];
+        var fenceType = +ds099Params[19];
+        var count = (+ds099Params[20]) * 2;
+        var points = fenceType === 3 ? ds099Params.slice(21, 21 + count) : [];
+        var center = fenceType === 1 ? ds099Params.slice(21, 23) : [];
+        var radius = fenceType === 1 ? ds099Params[20]: 0;
         var version = ds099Params[ds099Params.length - 1].replace('&', '');
+        var bits = parseInt(ds099Params[18], 16).toString(2);
+        var LED = bits[bits.length - 2] == "1";
         return {
-          geoMode: geoMode,
+          gps: gps,
           timeZone: timeZone,
-          frequency: frequency,
+          LBS: LBS,
+          LED: LED,
+          fence: {
+            type: fenceType,
+            points: points,
+            center: center,
+            radius: radius
+          },
+          heartbeat: heartbeat,
           waken: waken,
           power: power,
           version: version,
