@@ -108,8 +108,12 @@ export default {
         },
         'set-radius': function(radius) {
             var polyline = this.map.getAllOverlays('polyline')[0];
+            var polygon = this.map.getAllOverlays('polygon')[0];
             if(polyline) {
                 polyline.setMap(null);
+            }
+            if(polygon) {
+                polygon.setMap(null);
             }
             this.drawCircle(radius);
             var mapCenter = this.map.getCenter();

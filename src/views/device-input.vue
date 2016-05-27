@@ -1,11 +1,5 @@
 <template>
     <div class="page">
-        <header class="nav-bar">
-            <div class="nav-menu-left" @click="goBack">
-                <i class="fa fa-caret-left"></i>
-            </div>
-            <div class="title">新建宠管家</div>
-        </header>
         <div class="input">
             <div class="text-field">
                 <i class="fa fa-mobile"></i>
@@ -60,7 +54,7 @@ export default {
         font-size: 20px;
     }
     .docked-bottom {
-        background: yellow;
+        background: #FEDA00;
         padding-top: 20px;
         padding-bottom: 50px;
     }

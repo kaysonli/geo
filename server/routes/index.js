@@ -103,6 +103,33 @@ router.get('/devices', isAuthenticated, function(req, res, next) {
     );
 });
 
+router.post('/devices', isAuthenticated, function(req, res, next) {
+    var client = request.createClient(serverUrl);
+    var name = req.body.name;
+    var sim = req.body.sim;
+    var imei = req.body.imei;
+    var data = {
+        "actionName": "UserAddDev",
+        "appId": appId,
+        "appSecret": appSecret,
+        "entrySet": [{
+            "name": name,
+            "note": sim,
+            "sim": sim,
+            "sign": imei,
+            "userId": req.user.id
+        }],
+        "status": 0,
+        "timeStamp": 183727132
+    };
+    client.post('WebAPI.ashx/?=', data,
+        function(error, response, body) {
+            console.log(error);
+            res.send(body);
+        }
+    );
+});
+
 router.get('/additionals/:id', isAuthenticated, function(req, res, next) {
     var client = request.createClient(serverUrl);
     var data = {
