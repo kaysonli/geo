@@ -83,6 +83,7 @@ export default {
                 return;
             }
             var polygon = this.map.getAllOverlays('polygon')[0];
+            var polyline = this.map.getAllOverlays('polyline')[0];
             var points = [];
             if(polygon) {
                 var path = polygon.getPath();
@@ -91,8 +92,14 @@ export default {
                 });
             }
             console.log(points);
-            this.mouseTool.close(true);
-            this.postRegionSettings(points.slice(0, points.length - 1));
+            this.mouseTool.close(false);
+            if(this.circle) {
+                this.circle.setMap(null);
+            }
+            if(polyline) {
+                polyline.setMap(null);
+            }
+            this.postPolygonSettings(points.slice(0, points.length - 1));
         },
         'draw-cancel': function() {
             if(this.mouseTool) {
@@ -100,7 +107,13 @@ export default {
             }
         },
         'set-radius': function(radius) {
+            var polyline = this.map.getAllOverlays('polyline')[0];
+            if(polyline) {
+                polyline.setMap(null);
+            }
             this.drawCircle(radius);
+            var mapCenter = this.map.getCenter();
+            this.postCircleSettings([mapCenter.lng, mapCenter.lat], radius);
         },
         'timerange': function(range) {
             history.go(-1);
@@ -258,11 +271,21 @@ export default {
                 this.circle.setMap(null);
             }
         },
-        postRegionSettings(points) {
+        postPolygonSettings(points) {
             this.$http.post(this.$root.serverUrl + '/settings/region', {
                 devId: this.activeDevice.id,
                 devPwd: this.activeDevice.settings.password,
                 points: points
+            }).then(function(res) {
+
+            }, this);
+        },
+        postCircleSettings(center, radius) {
+            this.$http.post(this.$root.serverUrl + '/settings/circle', {
+                devId: this.activeDevice.id,
+                devPwd: this.activeDevice.settings.password,
+                center: center,
+                radius: radius
             }).then(function(res) {
 
             }, this);

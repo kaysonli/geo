@@ -106,6 +106,9 @@ export default {
         var count = (+ds099Params[20]) * 2;
         var points = fenceType === 3 ? ds099Params.slice(21, 21 + count) : [];
         var center = fenceType === 1 ? ds099Params.slice(21, 23) : [];
+        if(+center[0] < +center[1]) {
+          center.reverse();
+        }
         var radius = fenceType === 1 ? ds099Params[20]: 0;
         var version = ds099Params[ds099Params.length - 1].replace('&', '');
         var bits = parseInt(ds099Params[18], 16).toString(2);

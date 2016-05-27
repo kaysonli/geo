@@ -7,15 +7,15 @@ var config = require('../config.js');
 var moment = require('moment');
 
 //国测局坐标(火星坐标,比如高德地图在用),百度坐标,wgs84坐标(谷歌国外以及绝大部分国外在线地图使用的坐标)
-var coordtransform=require('coordtransform');
+var coordtransform = require('coordtransform');
 //百度经纬度坐标转国测局坐标
-var bd09togcj02=coordtransform.bd09togcj02(116.404, 39.915);
+var bd09togcj02 = coordtransform.bd09togcj02(116.404, 39.915);
 //国测局坐标转百度经纬度坐标
-var gcj02tobd09=coordtransform.gcj02tobd09(116.404, 39.915);
+var gcj02tobd09 = coordtransform.gcj02tobd09(116.404, 39.915);
 //wgs84转国测局坐标
-var wgs84togcj02=coordtransform.wgs84togcj02(116.404, 39.915);
+var wgs84togcj02 = coordtransform.wgs84togcj02(116.404, 39.915);
 //国测局坐标转wgs84坐标
-var gcj02towgs84=coordtransform.gcj02towgs84(116.404, 39.915);
+var gcj02towgs84 = coordtransform.gcj02towgs84(116.404, 39.915);
 console.log(bd09togcj02);
 console.log(gcj02tobd09);
 console.log(wgs84togcj02);
@@ -265,13 +265,14 @@ function queryCmdResult(index, callback) {
 function convertCoordinate(points) {
     var wgs84 = 'W,';
     var gcj02 = 'G,';
-    for(var i = 0;i<points.length;i++) {
+    for (var i = 0; i < points.length; i++) {
         var x = points[i][0],
             y = points[i][1];
         gcj02 += x + ',' + y + ','
         var p = coordtransform.gcj02towgs84(x, y);
         wgs84 += p[0] + ',' + p[1] + ','
     }
+    gcj02 = gcj02.slice(0, gcj02.length - 1);
     return wgs84 + gcj02;
 }
 
@@ -279,7 +280,7 @@ router.post('/settings/region', isAuthenticated, function(req, res, next) {
     var devId = req.body.devId;
     var devPwd = req.body.devPwd;
     var points = req.body.points;
-    var params = points.length + ',' + convertCoordinate(points) + devPwd;
+    var params = points.length + ',' + convertCoordinate(points);
     var cmd = '311';
     deviceSetting(cmd, devId, devPwd, params, res);
 });
@@ -287,9 +288,9 @@ router.post('/settings/region', isAuthenticated, function(req, res, next) {
 router.post('/settings/circle', isAuthenticated, function(req, res, next) {
     var devId = req.body.devId;
     var devPwd = req.body.devPwd;
-    var coord = req.body.coord;
+    var center = req.body.center;
     var radius = req.body.radius;
-    var params = radius + ',' + convertCoordinate([coord]) + devPwd;
+    var params = radius + ',' + convertCoordinate([center]);
     var cmd = '750';
     deviceSetting(cmd, devId, devPwd, params, res);
 });
