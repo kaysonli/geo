@@ -248,6 +248,8 @@ body {
   text-align: center;
   background: #FEDA00;
   margin: 20px auto;
+  font-weight: bold;
+  font-size: 14px;
 }
 .btn-revert {
   background: #fff;

@@ -1,25 +1,27 @@
 <template>
-    <div class="page">
-        <header class="nav-bar">
-            <div class="nav-menu-left" @click="goHome">
-                <i class="fa fa-caret-left"></i>
-            </div>
-            <div class="title">新建宠管家</div>
-        </header>
+    <div class="full-page">
         <div class="hint">
+            <img src="/resources/images/sm_ewm_bg.jpg" alt="">
             <div class="hint-text">
-                <div class="center">找出宠管家背面的二维码</div>
+                <div class="center">找出觅宠背面的二维码</div>
                 <div class="center">扫描后即可自动对接</div>
             </div>
         </div>
         <div class="btn" @click="scan">立即扫描二维码</div>
     </div>
+    <device-input v-show="scanned" :imei="imei"></device-input>
 </template>
 
 <script>
+import deviceInput from './device-input.vue'
 export default {
+    components: {
+        deviceInput
+    },
     data() {
         return {
+            scanned: false,
+            imei: ''
         }
     },
     methods: {
@@ -35,6 +37,8 @@ export default {
               }
             });
             // this.$router.go('/input');
+            this.scanned = true;
+            this.imei = '11111XXXXX';
         }
     }
 }
@@ -44,26 +48,23 @@ export default {
         float: left;
         width: 24px;
     }
-    .page {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: #fff;
+    .full-page {
+        background: #f0f0f0;
     }
     .hint {
-        height: 60%;
-        background: #fff;
-        color: gray;
         position: relative;
+        width: 70%;
+        margin: 15% auto;
     }
-    .hint-text {
-        position: absolute;
-        bottom: 20%;
+    .hint img {
         width: 100%;
     }
-    .btn {
-        background: yellow;
+    .hint-text {
+        line-height: 20px;
+        font-size: 14px;
+        color: #999;
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
     }
 </style>

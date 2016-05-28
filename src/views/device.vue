@@ -5,7 +5,7 @@
                 <div class="fa fa-map-signs"></div>
                 <div class="tool-text">围栏</div>
             </div>
-            <div class="tool" v-touch:tap="viewPath">
+            <div class="tool" :class="{active: tab === 'track'}" v-touch:tap="viewPath">
                 <div class="fa fa-paw"></div>
                 <div class="tool-text">轨迹</div>
             </div>
@@ -59,6 +59,9 @@ export default {
             if(this.gpsInfo.length > 0) {
                 this.initMap(this.activeDevice)
             }
+            if(transition.from.path.indexOf('range') > -1) {
+                this.clearLayers();
+            }
             transition.next();
         }
     },
@@ -76,7 +79,7 @@ export default {
     },
     events: {
         'draw-start': function() {
-            this.drawPolygon();
+            this.startDrawPolygon();
         },
         'draw-complete': function() {
             if(!this.mouseTool) {
@@ -155,7 +158,7 @@ export default {
             this.$router.go(this.$route.path + '/range');
         },
         viewPath() {
-            this.tab = '';
+            this.tab = 'track';
             this.$router.go(this.$route.path + '/track');
         },
         viewAlarms() {
@@ -199,7 +202,7 @@ export default {
                 this.circle.setRadius(radius);
             }
         },
-        drawPolygon() {
+        startDrawPolygon() {
             var map = this.map;
             map.plugin(["AMap.MouseTool"], function() {
                 var mouseTool = this.mouseTool = new AMap.MouseTool(map);
@@ -213,13 +216,28 @@ export default {
                 console.log(data);
             }, this);
         },
+        drawPolygon(points) {
+            if(!this.polygon) {
+                this.polygon = new AMap.Polygon({
+                    path: points,          //设置线覆盖物路径
+                    strokeColor: "#f00", //线颜色#FEDA00
+                    strokeOpacity: 1,       //线透明度
+                    strokeWeight: 2,        //线宽
+                    fillOpacity: 0,
+                    strokeStyle: "solid",   //线样式
+                    strokeDasharray: [10, 5] //补充线样式
+                })
+            }
+            this.polygon.setMap(this.map);
+            this.polygon.setPath(points);
+        },
         drawPath(lineArr) {
             if(!this.trackLine) {
                 this.trackLine = new AMap.Polyline({
                     path: lineArr,          //设置线覆盖物路径
-                    strokeColor: "#f00", //线颜色#FEDA00
+                    strokeColor: "yellow", //线颜色#FEDA00
                     strokeOpacity: 1,       //线透明度
-                    strokeWeight: 2,        //线宽
+                    strokeWeight: 5,        //线宽
                     strokeStyle: "solid",   //线样式
                     strokeDasharray: [10, 5] //补充线样式
                 });
@@ -264,7 +282,7 @@ export default {
                     points.push([fence.points[i], fence.points[i + 1]]);
                 }
                 points.push([fence.points[0], fence.points[1]]);
-                this.drawPath(points);
+                this.drawPolygon(points);
             }
         },
         clearLayers() {
@@ -273,6 +291,9 @@ export default {
             }
             if(this.circle) {
                 this.circle.setMap(null);
+            }
+            if(this.polygon) {
+                this.polygon.setMap(null);
             }
         },
         postPolygonSettings(points) {

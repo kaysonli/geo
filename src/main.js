@@ -87,11 +87,13 @@ router.redirect({
 
 Vue.http.interceptors.push({
     request: function (request) {
-        store.dispatch('SET_LOADING', true);
+        if(request.url !== '/gps') {
+            console.log(request.data.actionName);
+            store.dispatch('SET_LOADING', true);
+        }
         return request;
     },
     response: function (response) {
-        console.log(response);
         if(response.data.status === -1) {
             store.dispatch('SET_LOGINED', false);
             router.go('/login');

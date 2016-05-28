@@ -41,6 +41,7 @@ export default {
                 if(res.data.status === 0) {
                     this.setLogined(true);
                     this.$router.go('/devices');
+                    location.reload();
                 }
             }, function(res) {
                 if(res.status === 401) {

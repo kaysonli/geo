@@ -109,7 +109,7 @@ router.post('/devices', isAuthenticated, function(req, res, next) {
     var sim = req.body.sim;
     var imei = req.body.imei;
     var data = {
-        "actionName": "UserAddDev",
+        "actionName": "AddDev",
         "appId": appId,
         "appSecret": appSecret,
         "entrySet": [{
