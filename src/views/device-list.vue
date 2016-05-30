@@ -1,5 +1,11 @@
 <template>
     <div class="device-list" v-el:container>
+        <modal :show.sync="showModal">
+            <div slot="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-default" @click='showCustomModal = false'>Exit</button>
+            <button type="button" class="btn btn-success" @click='showCustomModal = false'>Custom Save</button>
+          </div>
+        </modal>
         <div class="btn" v-touch:tap="addDevice">新建宠觅</div>
         <div class="item-list">
             <div class="item" v-for="dev in devices" 
@@ -11,6 +17,7 @@
                 <div class="item-info">
                     <header>
                         <div class="name">{{dev.name}}</div>
+                        <div class="warnings" v-show="dev.warnings.length > 0"></div>
                         <div class="battery"><i class="fa fa-battery-{{dev.power | battery}}"></i></div>
                     </header>
                     <div class="status">
@@ -32,7 +39,7 @@
                         <time>{{dev.gps.dt_gps}}</time>
                     </div>
                 </div>
-                <div class="btn-remove" v-touch:tap.stop="removeDevice(dev, $index)">
+                <div class="btn-remove" v-touch:tap.stop="removeDevice(dev, $index, $event)">
                     <span>删除设备</span>
                 </div>
             </div>
@@ -42,7 +49,11 @@
 
 <script>
 import {deleteDevice, updateActiveDevice} from '../vuex/actions'
+import modal from '../../node_modules/vue-strap/src/Modal.vue'
 export default {
+    components: {
+        modal
+    },
     vuex: {
         getters: {
             devices: state => state.devices,
@@ -56,6 +67,7 @@ export default {
     },
     data() {
         return {
+            showModal: true,
             maps: {}
         }
     },
@@ -108,8 +120,13 @@ export default {
                 }
             });
         },
-        removeDevice(dev, index) {
-            this.deleteDevice(dev);
+        removeDevice(dev, index, evt) {
+            evt.srcEvent.stopPropagation();
+            this.$http.delete(this.$root.serverUrl + '/devices/' + dev.id, {
+
+            }).then(function(res) {
+                this.deleteDevice(dev);
+            }, this);
         },
         initMaps() {
             this.devices.forEach(function(dev) {
@@ -231,5 +248,11 @@ export default {
     }
     .removing .btn-remove {
         right: -120px;
+    }
+    .warnings {
+        height: 25px;
+        width: 25px;
+        background: url(/resources/images/warning_ico.jpg) no-repeat center;
+        margin-right: 10px;
     }
 </style>

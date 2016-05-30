@@ -109,15 +109,38 @@ router.post('/devices', isAuthenticated, function(req, res, next) {
     var sim = req.body.sim;
     var imei = req.body.imei;
     var data = {
-        "actionName": "AddDev",
+        "actionName": "ModifyDev",
         "appId": appId,
         "appSecret": appSecret,
         "entrySet": [{
             "name": name,
-            "note": sim,
+            "isDefault": 1,
+            "note": '',
             "sim": sim,
             "sign": imei,
             "userId": req.user.id
+        }],
+        "status": 0,
+        "timeStamp": 183727132
+    };
+    client.post('WebAPI.ashx/?=', data,
+        function(error, response, body) {
+            console.log(error);
+            res.send(body);
+        }
+    );
+});
+
+router.delete('/devices/:id', isAuthenticated, function(req, res, next) {
+    var client = request.createClient(serverUrl);
+    var devId = req.params.id;
+    var data = {
+        "actionName": "DeleteDev",
+        "appId": appId,
+        "appSecret": appSecret,
+        "paramsSet": [{
+            "name": 'id',
+            "value": devId
         }],
         "status": 0,
         "timeStamp": 183727132

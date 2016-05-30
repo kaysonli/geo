@@ -38,7 +38,7 @@ export default {
             });
             // this.$router.go('/input');
             this.scanned = true;
-            this.imei = '11111XXXXX';
+            this.imei = '352116666688888';
         }
     }
 }

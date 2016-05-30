@@ -54,6 +54,7 @@ export default {
                   dev.settings = {};
                   dev.location = '';
                   dev.power = 0;
+                  dev.warnings = [];
                   dev.removing = false;
               });
           }
@@ -61,6 +62,7 @@ export default {
           this.loadDevices(devices);
           this.queryGPS();
           this.querySettings();
+          this.queryWarnings();
       }, this);
     },
     queryGPS() {
@@ -90,6 +92,15 @@ export default {
           dev.settings.imei = dev.sign;
           dev.settings.sim = dev.sim;
           dev.settings.admin = ds099Admin[1];
+        }, this);
+      }, this);
+    },
+    queryWarnings() {
+      this.devices.forEach(function(dev) {
+        this.$http.get(this.$root.serverUrl + '/warnings/' + dev.id).then(function(res) {
+            dev.warnings = res.data.entrySet.filter(function(w) {
+              return w.devId === dev.id
+            });
         }, this);
       }, this);
     },

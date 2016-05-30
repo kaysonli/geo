@@ -32,7 +32,7 @@ export default {
                 name: this.deviceName,
                 imei: this.imei
             }).then(function(res) {
-                if(res.body.status === 0) {
+                if(res.data.status === 0) {
                     this.$router.go('/devices');
                     location.reload();
                 }

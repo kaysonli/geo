@@ -50,6 +50,7 @@
     "vue-hot-reload-api": "^1.2.2",
     "vue-resource": "^0.7.0",
     "vue-router": "^0.7.13",
+    "vue-strap": "^1.0.11",
     "vue-touch": "^1.1.0",
     "vueify": "^8.0.0",
     "vueify-insert-css": "^1.0.0",
