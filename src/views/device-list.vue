@@ -1,12 +1,8 @@
 <template>
     <div class="device-list" v-el:container>
-        <modal :show.sync="showModal">
-            <div slot="modal-footer" class="modal-footer">
-            <button type="button" class="btn btn-default" @click='showCustomModal = false'>Exit</button>
-            <button type="button" class="btn btn-success" @click='showCustomModal = false'>Custom Save</button>
-          </div>
-        </modal>
-        <div class="btn" v-touch:tap="addDevice">新建宠觅</div>
+        <confirm title="提示" message="确定删除设备吗？" v-ref:confirm>
+        </confirm>
+        <div class="button" v-touch:tap="addDevice">新建宠觅</div>
         <div class="item-list">
             <div class="item" v-for="dev in devices" 
                 v-bind:class="{'removing': dev.removing}"
@@ -49,10 +45,10 @@
 
 <script>
 import {deleteDevice, updateActiveDevice} from '../vuex/actions'
-import modal from '../../node_modules/vue-strap/src/Modal.vue'
+import confirm from '../components/Confirm.vue';
 export default {
     components: {
-        modal
+        confirm
     },
     vuex: {
         getters: {
@@ -122,11 +118,18 @@ export default {
         },
         removeDevice(dev, index, evt) {
             evt.srcEvent.stopPropagation();
-            this.$http.delete(this.$root.serverUrl + '/devices/' + dev.id, {
+            var me = this;
+            setTimeout(function() {
+                this.$refs.confirm.show(function(yes) {
+                    if(yes) {
+                        me.$http.delete(me.$root.serverUrl + '/devices/' + dev.id, {
 
-            }).then(function(res) {
-                this.deleteDevice(dev);
-            }, this);
+                        }).then(function(res) {
+                            me.deleteDevice(dev);
+                        }, me);
+                    }
+                });
+            }.bind(this), 50);
         },
         initMaps() {
             this.devices.forEach(function(dev) {
@@ -254,5 +257,9 @@ export default {
         width: 25px;
         background: url(/resources/images/warning_ico.jpg) no-repeat center;
         margin-right: 10px;
+    }
+
+    .modal-footer {
+        text-align: center;
     }
 </style>

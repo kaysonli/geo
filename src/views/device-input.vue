@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="page-bottom">
-            <div class="btn" v-touch:tap="submit">完成</div>
+            <div class="button" v-touch:tap="submit">完成</div>
             <div class="center">如有疑问请咨询：400-155-2158</div>
         </div>
     </div>
@@ -65,7 +65,7 @@ export default {
         padding-bottom: 50px;
     }
 
-    .btn {
+    .button {
         background: #fff;
     }
 

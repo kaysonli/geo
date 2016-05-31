@@ -3,7 +3,7 @@
         <div class="text-field flex-box">
             <i class="fa fa-mobile"></i>
             <input type="text" v-model="mobile" placeholder="请输入手机号码" class="icon-mobile icon">
-            <div class="btn fetch" @click="fetch">{{ btnText }}</div>
+            <div class="button fetch" @click="fetch">{{ btnText }}</div>
         </div>
         <div class="error" v-show="error.notexisted">*用户不存在</div>
         <div class="error" v-show="error.mobile">*手机号不正确</div>
@@ -13,7 +13,7 @@
         </div>
         <div class="error" v-show="error.code">*验证码不正确</div>
         <div class="page-bottom">
-            <div class="btn btn-revert" @click="next">下一步</div>
+            <div class="button button-revert" @click="next">下一步</div>
         </div>
     </form>
 </template>
@@ -104,16 +104,16 @@ export default {
     .password-field {
         margin-top: 15px;
     }
-    .btn {
+    .button {
         width: 85%;
     }
-    .btn:active {
+    .button:active {
         background: #eee;
     }
-    .btn.fetch:active {
+    .button.fetch:active {
         background: #eac600;
     }
-    .btn.fetch {
+    .button.fetch {
         background: #FEDA00;
         border-radius: 5px;
         height: 35px;

@@ -1,5 +1,5 @@
 <template>
-    <div class="container f0_bg">
+    <div class="f0_bg">
         <div class="shezhi">
             <div class="fl">管理员号码</div>
             <div class="fr">

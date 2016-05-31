@@ -7,8 +7,8 @@
         <div class="text-field">
             <input type="password" placeholder="请输入密码" v-el:password>
         </div>
-        <div class="btn" @click="login">登录</div>
-        <div class="btn btn-revert" @click="register">注册</div>
+        <div class="button" @click="login">登录</div>
+        <div class="button button-revert" @click="register">注册</div>
         <div class="forgot center" @click="forget">忘记密码</div>
         <div class="error center" v-show="incorrect">用户名或密码错误</div>
     </div>
@@ -79,13 +79,13 @@ export default {
         color: #A4A4A4;
         margin-top: 16px;
     }
-    .btn {
+    .button {
         width: 80%;
         margin-top: 10px;
         margin-bottom: 0;
         height: 47px;
     }
-    .btn:active {
+    .button:active {
         background: #eac600;
     }
     .register {

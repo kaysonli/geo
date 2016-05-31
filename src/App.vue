@@ -251,7 +251,7 @@ body {
   margin: 0;
   padding: 0;
 }
-.btn {
+.button {
   height: 47px;
   line-height: 47px;
   width: 80%;
@@ -262,7 +262,7 @@ body {
   font-weight: bold;
   font-size: 14px;
 }
-.btn-revert {
+.button-revert {
   background: #fff;
   border: 1px solid #ececec;
 }
@@ -326,7 +326,7 @@ body {
   flex: 1;
   background: #FEDA00;
 }
-.page-bottom .btn {
+.page-bottom .button {
     margin-top: 30px;
 }
 

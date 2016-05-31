@@ -7,7 +7,7 @@
                 <div class="center">扫描后即可自动对接</div>
             </div>
         </div>
-        <div class="btn" @click="scan">立即扫描二维码</div>
+        <div class="button" @click="scan">立即扫描二维码</div>
     </div>
     <device-input v-show="scanned" :imei="imei"></device-input>
 </template>

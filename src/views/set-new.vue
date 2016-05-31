@@ -9,7 +9,7 @@
         <div class="error" v-show="error.unmatch">*两次密码不一致</div>
         <div class="error" v-show="error.password">密码格式不正确</div>
         <div class="page-bottom">
-            <div class="btn btn-revert" @click="submit">完成</div>
+            <div class="button button-revert" @click="submit">完成</div>
         </div>
     </form>
 </template>
@@ -61,16 +61,16 @@ export default {
     .password-field {
         margin-top: 15px;
     }
-    .btn {
+    .button {
         width: 85%;
     }
-    .btn:active {
+    .button:active {
         background: #eee;
     }
-    .btn.fetch:active {
+    .button.fetch:active {
         background: #eac600;
     }
-    .btn.fetch {
+    .button.fetch {
         background: #FEDA00;
         border-radius: 5px;
         height: 35px;

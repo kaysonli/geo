@@ -59,7 +59,7 @@ export default {
             if(this.gpsInfo.length > 0) {
                 this.initMap(this.activeDevice)
             }
-            if(transition.from.path.indexOf('range') > -1) {
+            if(transition.from.path && transition.from.path.indexOf('range') > -1) {
                 this.clearLayers();
             }
             transition.next();

@@ -25,7 +25,7 @@
         <scroller v-ref:endhour :items="hours" :ticks="3" class="hour-scroller"></scroller>
         <scroller v-ref:endmin :items="minutes" :ticks="3"></scroller>
       </div>
-      <div class="btn" v-touch:tap="onOK">确定</div>
+      <div class="button" v-touch:tap="onOK">确定</div>
     </div>
 </template>
 
