@@ -20,10 +20,12 @@
     "coordtransform": "^2.0.2",
     "cors": "^2.7.1",
     "express-session": "^1.13.0",
+    "jssha": "^2.1.0",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "request": "^2.72.0",
     "serve-index": "^1.7.3",
-    "socket.io": "^1.4.6"
+    "socket.io": "^1.4.6",
+    "weixin-api": "^0.1.7"
   }
 }
