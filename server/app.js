@@ -17,7 +17,7 @@ var appId = config.appId;
 var appSecret = config.appSecret;
 
 function getUser(username, callback) {
-  var client = request.createClient(serverUrl);
+    var client = request.createClient(serverUrl);
     var data = {
         "actionName": "QueryUser",
         "appId": appId,
@@ -34,10 +34,10 @@ function getUser(username, callback) {
     };
     client.post('WebAPI.ashx/?=', data,
         function(error, response, body) {
-            if(error) {
+            if (error) {
                 callback(null);
             } else {
-              callback(body.entrySet ? body.entrySet[0] : null);
+                callback(body.entrySet ? body.entrySet[0] : null);
             }
         }
     );
@@ -62,14 +62,14 @@ function verifyUserLogin(username, password, callback) {
     };
     client.post('WebAPI.ashx/?=', data,
         function(error, response, body) {
-            if(error) {
+            if (error) {
                 callback(false);
             } else {
-              var isValid = body.entrySet && body.entrySet[0].pwd === password;
-              callback({
-                user: isValid ? body.entrySet[0] : null,
-                message: isValid ? '' : '用户名或密码错误'
-              });
+                var isValid = body.entrySet && body.entrySet[0].pwd === password;
+                callback({
+                    user: isValid ? body.entrySet[0] : null,
+                    message: isValid ? '' : '用户名或密码错误'
+                });
             }
         }
     );
@@ -79,14 +79,14 @@ passport.use(new LocalStrategy({
         passReqToCallback: true
     },
     function(req, username, password, done) {
-      verifyUserLogin(username, password, function(result) {
-        if(!result.user) {
-          return done(null, false, {
-            message: result.message
-          });
-        }
-        return done(null, result.user);
-      });
+        verifyUserLogin(username, password, function(result) {
+            if (!result.user) {
+                return done(null, false, {
+                    message: result.message
+                });
+            }
+            return done(null, result.user);
+        });
         // User.findOne({ username: username }, function(err, user) {
         //     if (err) {
         //         return done(err); }
@@ -108,7 +108,7 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(name, done) {
     getUser(name, function(user) {
-      done(null, user);
+        done(null, user);
     });
 });
 
@@ -126,19 +126,26 @@ app.set('view engine', 'jade');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, '../')));
 
 // Serve URLs like /ftp/thing as public/ftp/thing
-app.use('/michong', serveIndex(path.join(__dirname, '../michong'), {'icons': true}));
+app.use('/michong', serveIndex(path.join(__dirname, '../michong'), {
+    'icons': true
+}));
 
 app.use(cors({
     origin: '*'
 }));
 var expressSession = require('express-session');
-app.use(expressSession({ secret: 'petmeet' }));
+app.use(expressSession({
+    secret: 'petmeet',
+    cookie: {maxAge: 60 * 1000 * 60 * 24 * 365}
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 

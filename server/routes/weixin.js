@@ -111,7 +111,7 @@ weixin.eventMsg(function(msg) {
 });
 // Start
 router.post('/', function(req, res) {
-
+    console.log(req.query);
     // loop
     weixin.loop(req, res);
 
