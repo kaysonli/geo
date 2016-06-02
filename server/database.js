@@ -1,6 +1,6 @@
 var sql = require('mssql');
-
-sql.connect("mssql://sa:baidouServer@120.25.76.30/GpsPlatform").then(function() {
+var url = "";
+sql.connect(url).then(function() {
 	// Query
 
 	new sql.Request().query('select * from [GpsPlatform].[dbo].[UserInfo]').then(function(recordset) {
